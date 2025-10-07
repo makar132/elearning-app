@@ -2,7 +2,7 @@
 
 ## Project Structure
 
-\`\`\`
+```
 elearning-app/
 ├── app/
 │   ├── _layout.jsx
@@ -20,7 +20,7 @@ elearning-app/
 │   ├── redux/
 │   └── utils/
 └── assets/
-\`\`\`
+```
 
 ## Getting Started
 

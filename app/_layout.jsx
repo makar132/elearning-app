@@ -1,7 +1,7 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Slot } from 'expo-router';
-import { AuthProvider } from '../src/context/AuthContext';
 import { Provider } from 'react-redux';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { AuthProvider } from '../src/context/AuthContext';
 import { store } from '../src/redux/store';
 
 const queryClient = new QueryClient();

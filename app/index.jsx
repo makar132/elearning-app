@@ -1,16 +1,17 @@
-import { useRouter } from 'expo-router';
-import { useEffect } from 'react';
-import { useAuth } from '../src/context/AuthContext';
+import { useRouter } from "expo-router";
+import { useEffect } from "react";
+import { useAuth } from "../src/context/AuthContext";
 
 export default function Index() {
-  const { user, isLoading } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoading) {
-      router.replace(user ? '/(student)/dashboard' : '/onboarding');
+    if (!loading) {
+      if (!user) router.replace("/(auth)/login");
+      else router.replace("profile");
     }
-  }, [user, isLoading]);
+  }, [user, loading]);
 
   return null;
 }

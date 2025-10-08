@@ -1,19 +1,90 @@
 import React, { useState } from 'react';
-import { View, ScrollView, TouchableOpacity } from 'react-native';
+import { View, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Text, TextInput, Button, IconButton } from 'react-native-paper';
 import { router } from 'expo-router';
 import { authStyles, authColors } from '../../src/utils/authStyles';
+import { login } from '../../src/services/authService';
+import { useAuth } from '../../src/context/AuthContext';
+import Toast from 'react-native-toast-message';
 
 const Login = () => {
+  const { loginUser } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
-    // TODO: Add login logic
-    // For now, navigate to student dashboard
-    router.replace('/(student)/dashboard');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+
+  // Regex 
+  const emailRegex = /^[^\s@]+@[^\s@]+\.com+$/;
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&*!]).{8,}$/;
+
+  //  validate
+  const validateEmail = (text) => {
+    setEmail(text);
+    if (!text) setEmailError("Email is required");
+    else if (!emailRegex.test(text)) setEmailError("Email format is invalid");
+    else setEmailError("");
   };
+
+  const validatePassword = (text) => {
+    setPassword(text);
+    if (!text) setPasswordError("Password is required");
+    else if (!passwordRegex.test(text)) setPasswordError("Password must contain at least 1 uppercase, 1 lowercase, 1 number, 1 special character, min 8 chars");
+    else setPasswordError("");
+  };
+
+  const handleLogin = async () => {
+    // validate
+    validateEmail(email);
+    validatePassword(password);
+
+    if (emailError || passwordError) return;
+
+    setLoading(true);
+
+    try {
+      const result = await login(email, password);
+      setLoading(false);
+
+      if (result.success) {
+        loginUser(result.user);
+        // Toast.show({
+        //   type: 'success',
+        //   text1: 'Logged in successfully!',
+        //   position: 'bottom',
+        // });
+        // Redirect
+        router.replace(result.role === 'student' ? '/(student)/my-courses' : '/(admin)');
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Login failed. Please try again.',
+          text2: result.error,
+          position: 'bottom',
+        });
+      }
+    } catch (err) {
+      setLoading(false);
+      console.error(err);
+      Toast.show({
+        type: 'error',
+        text1: 'An error occurred. Please try again.',
+        text2: err.message,
+        position: 'bottom',
+      });
+    }
+  };
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={authColors.primary} />
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={authStyles.container} showsVerticalScrollIndicator={false}>
@@ -41,14 +112,17 @@ const Login = () => {
           mode="outlined"
           placeholder="Contact@gmail.com"
           value={email}
-          onChangeText={setEmail}
+          onChangeText={validateEmail}
+          onBlur={() => validateEmail(email)}
           keyboardType="email-address"
           autoCapitalize="none"
-          style={authStyles.input}
+          style={[authStyles.input, emailError ? { borderColor: 'red' } : null]}
           outlineColor="#E2E8F0"
           activeOutlineColor={authColors.primary}
         />
+        {emailError ? <Text style={{ color: 'red', marginTop: 5 }}>{emailError}</Text> : null}
       </View>
+
 
       {/* Password Input */}
       <View style={authStyles.inputContainer}>
@@ -57,9 +131,10 @@ const Login = () => {
           mode="outlined"
           placeholder="••••••••••••••••"
           value={password}
-          onChangeText={setPassword}
+          onChangeText={validatePassword}
+          onBlur={() => validatePassword(password)}
           secureTextEntry={!showPassword}
-          style={authStyles.input}
+          style={[authStyles.input, passwordError ? { borderColor: 'red' } : null]}
           outlineColor="#E2E8F0"
           activeOutlineColor={authColors.primary}
           right={
@@ -69,7 +144,9 @@ const Login = () => {
             />
           }
         />
+        {passwordError ? <Text style={{ color: 'red', marginTop: 5 }}>{passwordError}</Text> : null}
       </View>
+
 
       {/* Forgot Password */}
       <TouchableOpacity style={{ alignSelf: 'flex-end', marginTop: 8, marginBottom: 24 }}>
@@ -91,7 +168,7 @@ const Login = () => {
 
       {/* Footer */}
       <View style={[authStyles.footer, { marginBottom: 30 }]}>
-        <Text style={authStyles.footerText}>Don't Have An Account?</Text>
+        <Text style={authStyles.footerText}>{'Don\'t Have An Account?'}</Text>
         <TouchableOpacity onPress={() => router.push('/(auth)/register')}>
           <Text style={authStyles.footerLink}>Sign Up Here</Text>
         </TouchableOpacity>

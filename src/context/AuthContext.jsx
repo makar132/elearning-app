@@ -8,9 +8,10 @@ export const useAuth = () => useContext(AuthContext);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
 
+  // get user when open app
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setIsLoading(true);
@@ -55,6 +56,30 @@ export function AuthProvider({ children }) {
     return unsubscribe;
   }, []);
 
+  // store user
+  const loginUser = async (firebaseUser) => {
+    if (!firebaseUser) return;
+    const userData = {
+      uid: firebaseUser.uid,
+      email: firebaseUser.email,
+      displayName: firebaseUser.displayName || ''
+    };
+    setUser(userData);
+    await AsyncStorage.setItem('@user', JSON.stringify(userData));
+  };
+
+  // logout
+  const logout = async () => {
+    try {
+      await signOut(auth);
+      setUser(null);
+      await AsyncStorage.removeItem('@user');
+    } catch (error) {
+      console.error('Logout Error:', error);
+    }
+  };
+
+  // onboarding
   const completeOnboarding = () => setHasCompletedOnboarding(true);
 
   const logout = async () => {

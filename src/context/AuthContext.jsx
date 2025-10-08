@@ -1,23 +1,25 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-export const AuthContext = createContext({});
+import { observeAuthState } from '../services/authService';
+
+const AuthContext = createContext();
+
 export const useAuth = () => useContext(AuthContext);
 
-export function AuthProvider({ children }) {
+export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // TODO: load auth state & onboarding flag
-    setUser("test");
-    setIsLoading(false);
+    const unsubscribe = observeAuthState((firebaseUser) => {
+      setUser(firebaseUser);
+      setLoading(false);
+    });
+    return unsubscribe;
   }, []);
 
-  const completeOnboarding = () => setHasCompletedOnboarding(true);
-
   return (
-    <AuthContext.Provider value={{ user, isLoading, hasCompletedOnboarding, completeOnboarding }}>
+    <AuthContext.Provider value={{ user, loading }}>
       {children}
     </AuthContext.Provider>
   );
-}
+};

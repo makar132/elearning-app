@@ -1,43 +1,66 @@
+import { router } from "expo-router";
 import { Drawer } from "expo-router/drawer";
-import { View } from "react-native";
-import { Text } from "react-native-paper";
+import { useEffect } from "react";
+import { StyleSheet, View } from "react-native";
+import { ActivityIndicator, Text } from "react-native-paper";
 import { useAuth } from "../../src/context/AuthContext";
+import { checkAdminPermission } from "../../src/utils/permissions";
 
 export default function AdminLayout() {
   const { user, isLoading } = useAuth();
 
-  // useEffect(() => {
-  //   if (!isLoading && !checkAdminPermission(user)) {
-  //     router.replace("/login");
-  //   }
-  // }, [user, isLoading]);
+  console.log("AdminLayout user:", user);
+  console.log("checkAdminPermission:", checkAdminPermission(user));
+  useEffect(() => {
+    if (!isLoading && !checkAdminPermission(user)) {
+      router.replace("/login");
+    }
+  }, [user, isLoading]);
 
   // Show loading while checking auth
   if (isLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>Loading...</Text>
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#2196F3" />
+        <Text style={styles.loadingText}>Loading...</Text>
       </View>
     );
   }
 
   // Redirect if not admin
-  // if (!checkAdminPermission(user)) {
-  //   return null;
-  // }
+  if (!checkAdminPermission(user)) {
+    return null;
+  }
 
   return (
     <Drawer
+      initialRouteName="dashboard"
       screenOptions={{
         headerShown: true,
         drawerActiveTintColor: "#2196F3",
-        drawerInactiveTintColor: "#666",
+        drawerInactiveTintColor: "#666666",
+        drawerActiveBackgroundColor: "#E3F2FD",
+        drawerInactiveBackgroundColor: "transparent",
         headerStyle: {
           backgroundColor: "#2196F3",
+          elevation: 4,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.2,
+          shadowRadius: 4,
         },
-        headerTintColor: "#fff",
+        headerTintColor: "#FFFFFF",
         headerTitleStyle: {
-          fontWeight: "bold",
+          fontWeight: "600",
+          fontSize: 18,
+        },
+        drawerStyle: {
+          backgroundColor: "#FFFFFF",
+          width: 280,
+        },
+        drawerLabelStyle: {
+          fontSize: 16,
+          fontWeight: "500",
         },
       }}
     >
@@ -84,3 +107,16 @@ export default function AdminLayout() {
     </Drawer>
   );
 }
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
+  },
+  loadingText: {
+    marginTop: 16,
+    color: "#666666",
+  },
+});

@@ -59,11 +59,17 @@ export function AuthProvider({ children }) {
 
   // store user
   const loginUser = async (firebaseUser) => {
+    console.log("firebaseUser: ", firebaseUser);
     if (!firebaseUser) return;
     const userData = {
       uid: firebaseUser.uid,
       email: firebaseUser.email,
       displayName: firebaseUser.displayName || "",
+      role: firebaseUser.role || "student",
+      joinedCourses: [],
+      favorites: [],
+      wishlist: [],
+      createdAt: new Date(),
     };
     setUser(userData);
     await AsyncStorage.setItem("@user", JSON.stringify(userData));

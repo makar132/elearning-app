@@ -12,7 +12,45 @@ export const MyCoursesStyles = StyleSheet.create({
   bottomNav: { flexDirection: 'row', backgroundColor: '#1E40AF', borderRadius: 25, paddingVertical: 12, paddingHorizontal: 10, justifyContent: 'space-around', alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 8 },
   navItem: { flex: 1, alignItems: 'center', paddingVertical: 8 },
 
-
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    marginBottom: 10,
+    marginHorizontal: 20,
+  },
+  priceContainer: {
+    backgroundColor: "white",
+    padding: 10,
+    borderRadius: 12,
+    alignItems: "flex-end",
+    marginVertical: 10,
+  },
+  priceButton: {
+    borderRadius: 8,
+  },
+  priceButtonText: {
+    color: "white",
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+  priceSliderContainer: {
+    marginTop: 15,
+    alignItems: "center",
+    position: "relative"
+  },
+  priceRangeText: {
+    color: "#1E40AF",
+    fontWeight: "600",
+    marginBottom: 10,
+  },
+  priceClearFilter: {
+    position: "absolute",
+    color: "#ccc",
+    top: -50,
+    left: -10,
+    zIndex: 10,
+  },
   searchInput: {
     height: 50,
     borderColor: '#ccc',
@@ -46,6 +84,65 @@ export const MyCoursesStyles = StyleSheet.create({
   categoryTextSelected: {
     color: '#fff',
     fontSize: 14,
+  },
+  paginationContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  paginationButton: {
+    backgroundColor: '#1E40AF',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 5,
+    marginHorizontal: 5,
+  },
+  paginationButtonDisabled: {
+    backgroundColor: '#A5B4FC',
+  },
+  paginationText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  paginationNumber: {
+    borderWidth: 1,
+    borderColor: '#1E40AF',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 20,
+    marginHorizontal: 3,
+  },
+  paginationNumberActive: {
+    backgroundColor: '#1E40AF',
+  },
+  paginationNumberText: {
+    color: '#1E40AF',
+    fontWeight: 'bold'
+  },
+  paginationNumberTextActive: {
+    color: '#fff'
+  },
+   paginationContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    marginVertical: 15,
+  },
+  pageCircle: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1,
+    elevation: 2,
+  },
+  pageText: {
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });
 

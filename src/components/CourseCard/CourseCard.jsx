@@ -1,14 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Image, TouchableOpacity, View } from "react-native";
-import { Text } from "react-native-paper";
+import { View, Text, Image, TouchableOpacity } from "react-native";
 import defaultImg from "../../../assets/images/picture-loading-failed-1.png";
 import styles from "../../utils/CourseCard.styles";
-export default function CourseCard({
-  course,
-  onPressDetail,
-  onPressEnroll,
-  onPressFavorite,
-}) {
+
+export default function CourseCard({ course, onPressDetail, onPressEnroll, onPressFavorite }) {
   return (
     <View style={styles.card}>
       <View style={styles.cardContent}>
@@ -24,30 +19,17 @@ export default function CourseCard({
           <Text style={styles.instructor}>By {course.instructor}</Text>
 
           <View style={styles.iconRow}>
-            <TouchableOpacity
-              onPress={() => onPressDetail(course.id)}
-              style={styles.iconButton}
-            >
-              <Ionicons
-                name="information-circle-outline"
-                size={24}
-                color="#1E40AF"
-              />
+            <TouchableOpacity onPress={() => onPressDetail(course.id)} style={styles.iconButton}>
+              <Ionicons name="information-circle-outline" size={24} color="#1E40AF" />
               <Text style={styles.iconLabel}>Details</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={() => onPressEnroll(course.id)}
-              style={styles.iconButton}
-            >
+            <TouchableOpacity onPress={() => onPressEnroll(course.id)} style={styles.iconButton}>
               <Ionicons name="book-outline" size={24} color="#1E40AF" />
               <Text style={styles.iconLabel}>Enroll</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={() => onPressFavorite(course.id)}
-              style={styles.iconButton}
-            >
+            <TouchableOpacity onPress={() => onPressFavorite(course.id)} style={styles.iconButton}>
               <Ionicons name="heart-outline" size={24} color="#EF4444" />
               <Text style={styles.iconLabel}>Favorite</Text>
             </TouchableOpacity>

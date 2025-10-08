@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
 import {
-    Button,
-    Card,
-    Chip,
-    Modal,
-    Portal,
-    RadioButton,
-    Text,
-    TextInput,
+  Button,
+  Card,
+  Chip,
+  Modal,
+  Portal,
+  RadioButton,
+  Text,
+  TextInput,
 } from "react-native-paper";
 import { adminService } from "../../services/adminService";
 
@@ -60,7 +60,7 @@ export default function EditUserModal({
   const handleDelete = () => {
     Alert.alert(
       "Delete User",
-      `Are you sure you want to delete ${user?.name}? This cannot be undone.`,
+      `Are you sure you want to delete ${user?.name}? This action cannot be undone.`,
       [
         { text: "Cancel", style: "cancel" },
         {
@@ -94,20 +94,37 @@ export default function EditUserModal({
         contentContainerStyle={styles.modal}
       >
         <Card style={styles.card}>
-          <Card.Title title="Edit User" subtitle={`ID: ${user.id}`} />
+          <Card.Title
+            title="Edit User"
+            subtitle={`ID: ${user.id}`}
+            titleStyle={styles.cardTitle}
+            subtitleStyle={styles.cardSubtitle}
+          />
           <Card.Content>
+            {/* User Stats */}
             <View style={styles.statsContainer}>
-              <Chip icon="book" compact mode="outlined">
+              <Chip icon="book" compact mode="outlined" style={styles.statChip}>
                 {user.joinedCoursesCount} Courses
               </Chip>
-              <Chip icon="heart" compact mode="outlined">
+              <Chip
+                icon="heart"
+                compact
+                mode="outlined"
+                style={styles.statChip}
+              >
                 {user.favoritesCount} Favorites
               </Chip>
-              <Chip icon="bookmark" compact mode="outlined">
+              <Chip
+                icon="bookmark"
+                compact
+                mode="outlined"
+                style={styles.statChip}
+              >
                 {user.wishlistCount} Wishlist
               </Chip>
             </View>
 
+            {/* Form Fields */}
             <TextInput
               label="Name"
               value={editedUser.name}
@@ -117,7 +134,10 @@ export default function EditUserModal({
               mode="outlined"
               style={styles.input}
               disabled={loading}
+              outlineColor="#E0E0E0"
+              activeOutlineColor="#2196F3"
             />
+
             <TextInput
               label="Email"
               value={editedUser.email}
@@ -129,8 +149,11 @@ export default function EditUserModal({
               mode="outlined"
               style={styles.input}
               disabled={loading}
+              outlineColor="#E0E0E0"
+              activeOutlineColor="#2196F3"
             />
 
+            {/* Role Selection */}
             <View style={styles.roleSection}>
               <Text variant="titleMedium" style={styles.roleTitle}>
                 Role
@@ -142,27 +165,42 @@ export default function EditUserModal({
                 value={editedUser.role}
               >
                 <View style={styles.radioOption}>
-                  <RadioButton value="student" disabled={loading} />
-                  <Text>Student</Text>
+                  <RadioButton
+                    value="student"
+                    disabled={loading}
+                    color="#2196F3"
+                  />
+                  <Text style={styles.radioText}>Student</Text>
                 </View>
                 <View style={styles.radioOption}>
-                  <RadioButton value="admin" disabled={loading} />
-                  <Text>Admin</Text>
+                  <RadioButton
+                    value="admin"
+                    disabled={loading}
+                    color="#2196F3"
+                  />
+                  <Text style={styles.radioText}>Admin</Text>
                 </View>
               </RadioButton.Group>
             </View>
           </Card.Content>
+
           <Card.Actions style={styles.actions}>
             <Button
               mode="outlined"
               onPress={handleDelete}
               disabled={loading}
-              textColor="#f44336"
+              textColor="#F44336"
+              style={styles.deleteButton}
             >
               Delete User
             </Button>
             <View style={styles.rightActions}>
-              <Button mode="outlined" onPress={onDismiss} disabled={loading}>
+              <Button
+                mode="outlined"
+                onPress={onDismiss}
+                disabled={loading}
+                style={styles.cancelButton}
+              >
                 Cancel
               </Button>
               <Button
@@ -170,8 +208,9 @@ export default function EditUserModal({
                 onPress={handleSave}
                 loading={loading}
                 disabled={loading}
+                style={styles.saveButton}
               >
-                Save
+                Save Changes
               </Button>
             </View>
           </Card.Actions>
@@ -182,22 +221,76 @@ export default function EditUserModal({
 }
 
 const styles = StyleSheet.create({
-  modal: { padding: 20 },
-  card: { maxWidth: 500, alignSelf: "center", width: "100%" },
+  modal: {
+    padding: 20,
+    justifyContent: "center",
+  },
+  card: {
+    maxWidth: 500,
+    alignSelf: "center",
+    width: "100%",
+    backgroundColor: "#FFFFFF",
+    elevation: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+  },
+  cardTitle: {
+    color: "#333333",
+    fontWeight: "600",
+  },
+  cardSubtitle: {
+    color: "#666666",
+  },
   statsContainer: {
     flexDirection: "row",
     gap: 8,
-    marginBottom: 16,
+    marginBottom: 20,
     flexWrap: "wrap",
   },
-  input: { marginBottom: 12 },
-  roleSection: { marginTop: 8 },
-  roleTitle: { marginBottom: 8 },
-  radioOption: { flexDirection: "row", alignItems: "center", marginBottom: 4 },
+  statChip: {
+    backgroundColor: "#F9FAFB",
+    borderColor: "#E0E0E0",
+  },
+  input: {
+    marginBottom: 16,
+    backgroundColor: "#FFFFFF",
+  },
+  roleSection: {
+    marginTop: 8,
+  },
+  roleTitle: {
+    marginBottom: 12,
+    color: "#333333",
+    fontWeight: "600",
+  },
+  radioOption: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  radioText: {
+    marginLeft: 8,
+    color: "#333333",
+  },
   actions: {
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingBottom: 16,
+    paddingTop: 8,
   },
-  rightActions: { flexDirection: "row", gap: 8 },
+  rightActions: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  deleteButton: {
+    borderColor: "#F44336",
+  },
+  cancelButton: {
+    borderColor: "#E0E0E0",
+  },
+  saveButton: {
+    backgroundColor: "#2196F3",
+  },
 });

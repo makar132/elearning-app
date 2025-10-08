@@ -1,11 +1,11 @@
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import {
-    Alert,
-    RefreshControl,
-    ScrollView,
-    StyleSheet,
-    View,
+  Alert,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  View,
 } from "react-native";
 import { ActivityIndicator, FAB, Snackbar, Text } from "react-native-paper";
 import CourseTable from "../../src/components/admin/CourseTable";
@@ -48,7 +48,7 @@ export default function CoursesScreen() {
   const onDeleteCourse = (course) => {
     Alert.alert(
       "Confirm Delete",
-      `Delete "${course.title}"? This cannot be undone.`,
+      `Are you sure you want to delete "${course.title}"? This action cannot be undone.`,
       [
         { text: "Cancel", style: "cancel" },
         {
@@ -76,19 +76,25 @@ export default function CoursesScreen() {
     <View style={styles.container}>
       {loading && !refreshing ? (
         <View style={styles.centered}>
-          <ActivityIndicator size="large" />
-          <Text>Loading courses...</Text>
+          <ActivityIndicator size="large" color="#2196F3" />
+          <Text style={styles.loadingText}>Loading courses...</Text>
         </View>
       ) : (
         <ScrollView
           style={styles.scroll}
+          showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
         >
+          {/* Header */}
           <View style={styles.header}>
-            <Text variant="headlineLarge">Courses</Text>
-            <Text variant="bodyMedium">{courses.length} courses available</Text>
+            <Text variant="headlineMedium" style={styles.title}>
+              Courses
+            </Text>
+            <Text variant="bodyMedium" style={styles.subtitle}>
+              {courses.length} courses available
+            </Text>
           </View>
 
           <CourseTable
@@ -101,6 +107,8 @@ export default function CoursesScreen() {
             onCategoryChange={setCategoryFilter}
             loading={loading}
           />
+
+          <View style={styles.bottomSpacing} />
         </ScrollView>
       )}
 
@@ -115,6 +123,7 @@ export default function CoursesScreen() {
         visible={snackbarVisible}
         onDismiss={() => setSnackbarVisible(false)}
         duration={3000}
+        style={styles.snackbar}
       >
         {snackbarMsg}
       </Snackbar>
@@ -123,14 +132,47 @@ export default function CoursesScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff" },
-  scroll: { flex: 1 },
-  centered: { flex: 1, justifyContent: "center", alignItems: "center" },
-  header: { padding: 16, borderBottomWidth: 1, borderBottomColor: "#ddd" },
+  container: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+  },
+  scroll: {
+    flex: 1,
+  },
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
+  },
+  loadingText: {
+    marginTop: 16,
+    color: "#666666",
+  },
+  header: {
+    padding: 20,
+    backgroundColor: "#FFFFFF",
+    borderBottomWidth: 1,
+    borderBottomColor: "#F0F0F0",
+  },
+  title: {
+    color: "#2196F3",
+    fontWeight: "600",
+    marginBottom: 4,
+  },
+  subtitle: {
+    color: "#666666",
+  },
+  bottomSpacing: {
+    height: 80,
+  },
   fab: {
     position: "absolute",
     bottom: 16,
     right: 16,
     backgroundColor: "#2196F3",
+  },
+  snackbar: {
+    backgroundColor: "#F44336",
   },
 });

@@ -1,14 +1,13 @@
-import React from 'react';
-import { View, Image, TouchableOpacity } from 'react-native';
-import { Text } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
-import styles from '../../utils/CourseCard.styles'; 
-
+import { Image, TouchableOpacity, View } from 'react-native';
+import { Text } from 'react-native-paper';
+import defaultImg from '../../../assets/images/picture-loading-failed-1.png';
+import styles from '../../utils/CourseCard.styles';
 export default function CourseCard({ course, onPressDetail, onPressEnroll, onPressFavorite }) {
   return (
     <View style={styles.card}>
       <View style={styles.cardContent}>
-        <Image source={{ uri: course.image }} style={styles.courseImage} />
+        <Image source={course.image ? { uri: course.image } : defaultImg} style={styles.courseImage} />
 
         <View style={styles.courseDetails}>
           <Text style={styles.courseTitle} numberOfLines={2}>

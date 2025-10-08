@@ -1,8 +1,8 @@
-import { Ionicons } from '@expo/vector-icons';
-import { useEffect, useState } from 'react';
-import { ScrollView, TextInput, TouchableOpacity, View } from 'react-native';
-import { Text } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from "@expo/vector-icons";
+import { useEffect, useState } from "react";
+import { ScrollView, TextInput, TouchableOpacity, View } from "react-native";
+import { Text } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import CourseCard from '../../src/components/CourseCard/CourseCard';
 import Pagination from '../../src/components/CourseCard/Pagination';
@@ -116,7 +116,8 @@ export default function MyCourses() {
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <Text style={styles.pageTitle}>My Courses</Text>
         <Text style={styles.pageSubtitle}>
-          {filteredCourses.length} Course{filteredCourses.length > 1 ? 's' : ''} Enrolled
+          {filteredCourses.length} Course{filteredCourses.length > 1 ? "s" : ""}{" "}
+          Enrolled
         </Text>
 
 
@@ -134,11 +135,17 @@ export default function MyCourses() {
               key={index}
               style={[
                 styles.categoryItem,
-                selectedCategory === cat && styles.categoryItemSelected
+                selectedCategory === cat && styles.categoryItemSelected,
               ]}
               onPress={() => setSelectedCategory(cat)}
             >
-              <Text style={selectedCategory === cat ? styles.categoryTextSelected : styles.categoryText}>
+              <Text
+                style={
+                  selectedCategory === cat
+                    ? styles.categoryTextSelected
+                    : styles.categoryText
+                }
+              >
                 {cat}
               </Text>
             </TouchableOpacity>
@@ -175,8 +182,6 @@ export default function MyCourses() {
         />
         <View style={{ height: 100 }} />
       </ScrollView>
-
-
     </SafeAreaView>
   );
 }

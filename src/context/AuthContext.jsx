@@ -74,6 +74,17 @@ export function AuthProvider({ children }) {
   // onboarding
   const completeOnboarding = () => setHasCompletedOnboarding(true);
 
+  const logout = async () => {
+    try {
+      await signOut(auth);
+      setUser(null);
+      return { success: true };
+    } catch (error) {
+      console.error("Logout error:", error);
+      return { success: false, error: error.message };
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{

@@ -1,21 +1,22 @@
-/* eslint-disable import/no-unresolved */
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { auth, db } from './firebaseConfig.js';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 // sign up
-export const register = async ({ fullName, email, password, role }) => {
+export const register = async ({ fullName, email, password, role = 'student' }) => {
   try {
     // create user in firebase auth
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // store data in Firestore
+    // store data in Firestore with your array structure
     await setDoc(doc(db, 'users', user.uid), {
-      fullName,
+      name: fullName, // Use 'name' to match your updated structure
       email,
       role,
+      joinedCourses: [], // Initialize empty arrays
+      favorites: [],
+      wishlist: [],
       createdAt: new Date()
     });
 
@@ -26,7 +27,6 @@ export const register = async ({ fullName, email, password, role }) => {
   }
 };
 
-
 // login
 export const login = async (email, password) => {
   try {
@@ -34,12 +34,22 @@ export const login = async (email, password) => {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // Get user role from Firestore
+    // Get user data from Firestore
     const userDoc = await getDoc(doc(db, 'users', user.uid));
     const userData = userDoc.exists() ? userDoc.data() : null;
-    const role = userData?.role || 'student'; // default to student if role not found
 
-    return { success: true, user, role };
+    return {
+      success: true,
+      user: {
+        id: user.uid,
+        name: userData?.name || userData?.fullName,
+        email: userData?.email || user.email,
+        role: userData?.role || 'student',
+        joinedCourses: userData?.joinedCourses || [],
+        favorites: userData?.favorites || [],
+        wishlist: userData?.wishlist || []
+      }
+    };
   } catch (error) {
     console.error('Login Error:', error.message);
     return { success: false, error: error.message };

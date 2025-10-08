@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { createContext, useContext, useEffect, useState } from "react";
@@ -62,10 +63,10 @@ export function AuthProvider({ children }) {
     const userData = {
       uid: firebaseUser.uid,
       email: firebaseUser.email,
-      displayName: firebaseUser.displayName || ''
+      displayName: firebaseUser.displayName || "",
     };
     setUser(userData);
-    await AsyncStorage.setItem('@user', JSON.stringify(userData));
+    await AsyncStorage.setItem("@user", JSON.stringify(userData));
   };
 
   // logout
@@ -73,30 +74,20 @@ export function AuthProvider({ children }) {
     try {
       await signOut(auth);
       setUser(null);
-      await AsyncStorage.removeItem('@user');
+      await AsyncStorage.removeItem("@user");
     } catch (error) {
-      console.error('Logout Error:', error);
+      console.error("Logout Error:", error);
     }
   };
 
   // onboarding
   const completeOnboarding = () => setHasCompletedOnboarding(true);
 
-  const logout = async () => {
-    try {
-      await signOut(auth);
-      setUser(null);
-      return { success: true };
-    } catch (error) {
-      console.error("Logout error:", error);
-      return { success: false, error: error.message };
-    }
-  };
-
   return (
     <AuthContext.Provider
       value={{
         user,
+        loginUser,
         isLoading,
         hasCompletedOnboarding,
         completeOnboarding,

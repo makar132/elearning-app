@@ -1,23 +1,28 @@
-import React, { useState } from 'react';
-import { View, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { Text, TextInput, Button, IconButton } from 'react-native-paper';
-import { router } from 'expo-router';
-import { authStyles, authColors } from '../../src/utils/authStyles';
-import { login } from '../../src/services/authService';
-import { useAuth } from '../../src/context/AuthContext';
-import Toast from 'react-native-toast-message';
+import { router } from "expo-router";
+import { useState } from "react";
+import {
+  ActivityIndicator,
+  ScrollView,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { Button, IconButton, Text, TextInput } from "react-native-paper";
+import Toast from "react-native-toast-message";
+import { useAuth } from "../../src/context/AuthContext";
+import { login } from "../../src/services/authService";
+import { authColors, authStyles } from "../../src/utils/authStyles";
 
 const Login = () => {
   const { loginUser } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
-  // Regex 
+  // Regex
   const emailRegex = /^[^\s@]+@[^\s@]+\.com+$/;
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&*!]).{8,}$/;
 
@@ -32,7 +37,10 @@ const Login = () => {
   const validatePassword = (text) => {
     setPassword(text);
     if (!text) setPasswordError("Password is required");
-    else if (!passwordRegex.test(text)) setPasswordError("Password must contain at least 1 uppercase, 1 lowercase, 1 number, 1 special character, min 8 chars");
+    else if (!passwordRegex.test(text))
+      setPasswordError(
+        "Password must contain at least 1 uppercase, 1 lowercase, 1 number, 1 special character, min 8 chars"
+      );
     else setPasswordError("");
   };
 
@@ -48,7 +56,7 @@ const Login = () => {
     try {
       const result = await login(email, password);
       setLoading(false);
-
+      console.log("Login result:", result);
       if (result.success) {
         loginUser(result.user);
         // Toast.show({
@@ -57,37 +65,42 @@ const Login = () => {
         //   position: 'bottom',
         // });
         // Redirect
-        router.replace(result.role === 'student' ? '/(student)/my-courses' : '/(admin)');
+        router.replace(
+          result.user.role === "student" ? "/(student)/my-courses" : "/(admin)/"
+        );
       } else {
         Toast.show({
-          type: 'error',
-          text1: 'Login failed. Please try again.',
+          type: "error",
+          text1: "Login failed. Please try again.",
           text2: result.error,
-          position: 'bottom',
+          position: "bottom",
         });
       }
     } catch (err) {
       setLoading(false);
       console.error(err);
       Toast.show({
-        type: 'error',
-        text1: 'An error occurred. Please try again.',
+        type: "error",
+        text1: "An error occurred. Please try again.",
         text2: err.message,
-        position: 'bottom',
+        position: "bottom",
       });
     }
   };
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" color={authColors.primary} />
       </View>
     );
   }
 
   return (
-    <ScrollView style={authStyles.container} showsVerticalScrollIndicator={false}>
+    <ScrollView
+      style={authStyles.container}
+      showsVerticalScrollIndicator={false}
+    >
       {/* Back Button */}
       <IconButton
         icon="arrow-left"
@@ -116,13 +129,14 @@ const Login = () => {
           onBlur={() => validateEmail(email)}
           keyboardType="email-address"
           autoCapitalize="none"
-          style={[authStyles.input, emailError ? { borderColor: 'red' } : null]}
+          style={[authStyles.input, emailError ? { borderColor: "red" } : null]}
           outlineColor="#E2E8F0"
           activeOutlineColor={authColors.primary}
         />
-        {emailError ? <Text style={{ color: 'red', marginTop: 5 }}>{emailError}</Text> : null}
+        {emailError ? (
+          <Text style={{ color: "red", marginTop: 5 }}>{emailError}</Text>
+        ) : null}
       </View>
-
 
       {/* Password Input */}
       <View style={authStyles.inputContainer}>
@@ -134,22 +148,28 @@ const Login = () => {
           onChangeText={validatePassword}
           onBlur={() => validatePassword(password)}
           secureTextEntry={!showPassword}
-          style={[authStyles.input, passwordError ? { borderColor: 'red' } : null]}
+          style={[
+            authStyles.input,
+            passwordError ? { borderColor: "red" } : null,
+          ]}
           outlineColor="#E2E8F0"
           activeOutlineColor={authColors.primary}
           right={
             <TextInput.Icon
-              icon={showPassword ? 'eye-off' : 'eye'}
+              icon={showPassword ? "eye-off" : "eye"}
               onPress={() => setShowPassword(!showPassword)}
             />
           }
         />
-        {passwordError ? <Text style={{ color: 'red', marginTop: 5 }}>{passwordError}</Text> : null}
+        {passwordError ? (
+          <Text style={{ color: "red", marginTop: 5 }}>{passwordError}</Text>
+        ) : null}
       </View>
 
-
       {/* Forgot Password */}
-      <TouchableOpacity style={{ alignSelf: 'flex-end', marginTop: 8, marginBottom: 24 }}>
+      <TouchableOpacity
+        style={{ alignSelf: "flex-end", marginTop: 8, marginBottom: 24 }}
+      >
         <Text style={[authStyles.footerLink, { fontSize: 14 }]}>
           Forgot Password?
         </Text>
@@ -168,8 +188,8 @@ const Login = () => {
 
       {/* Footer */}
       <View style={[authStyles.footer, { marginBottom: 30 }]}>
-        <Text style={authStyles.footerText}>{'Don\'t Have An Account?'}</Text>
-        <TouchableOpacity onPress={() => router.push('/(auth)/register')}>
+        <Text style={authStyles.footerText}>{"Don't Have An Account?"}</Text>
+        <TouchableOpacity onPress={() => router.push("/(auth)/register")}>
           <Text style={authStyles.footerLink}>Sign Up Here</Text>
         </TouchableOpacity>
       </View>

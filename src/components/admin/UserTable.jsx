@@ -31,13 +31,15 @@ export default function UserTable({
     return matchesSearch && matchesRole;
   });
 
-  const getRoleColor = (role) => (role === "admin" ? "#D32F2F" : "#388E3C");
+  const getRoleColor = (role) => (role === "admin" ? "#D32F2F" : "#4CAF50");
 
   return (
     <Card style={styles.card}>
-      <Card.Content>
+      <Card.Content style={styles.cardContent}>
         <View style={styles.header}>
-          <Text variant="titleLarge">User Management</Text>
+          <Text variant="titleLarge" style={styles.headerTitle}>
+            User Management
+          </Text>
           <Text style={styles.subtitle}>
             {filteredUsers.length} of {users.length} users
           </Text>
@@ -48,6 +50,7 @@ export default function UserTable({
           onChangeText={onSearchChange}
           value={searchQuery}
           style={styles.searchbar}
+          inputStyle={styles.searchInput}
           editable={!loading}
         />
 
@@ -62,6 +65,7 @@ export default function UserTable({
                 compact
                 icon="filter"
                 disabled={loading}
+                style={styles.filterButton}
               >
                 {roleFilter === "all"
                   ? "All Roles"
@@ -95,19 +99,44 @@ export default function UserTable({
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <DataTable style={styles.table}>
-            <DataTable.Header>
-              <DataTable.Title style={styles.nameColumn}>Name</DataTable.Title>
-              <DataTable.Title style={styles.roleColumn}>Role</DataTable.Title>
-              <DataTable.Title numeric style={styles.statsColumn}>
+            <DataTable.Header style={styles.tableHeader}>
+              <DataTable.Title
+                style={styles.nameColumn}
+                textStyle={styles.headerText}
+              >
+                Name
+              </DataTable.Title>
+              <DataTable.Title
+                style={styles.roleColumn}
+                textStyle={styles.headerText}
+              >
+                Role
+              </DataTable.Title>
+              <DataTable.Title
+                numeric
+                style={styles.statsColumn}
+                textStyle={styles.headerText}
+              >
                 Courses
               </DataTable.Title>
-              <DataTable.Title numeric style={styles.statsColumn}>
+              <DataTable.Title
+                numeric
+                style={styles.statsColumn}
+                textStyle={styles.headerText}
+              >
                 Favorites
               </DataTable.Title>
-              <DataTable.Title numeric style={styles.statsColumn}>
+              <DataTable.Title
+                numeric
+                style={styles.statsColumn}
+                textStyle={styles.headerText}
+              >
                 Wishlist
               </DataTable.Title>
-              <DataTable.Title style={styles.actionColumn}>
+              <DataTable.Title
+                style={styles.actionColumn}
+                textStyle={styles.headerText}
+              >
                 Actions
               </DataTable.Title>
             </DataTable.Header>
@@ -116,8 +145,10 @@ export default function UserTable({
               <DataTable.Row key={user.id} style={styles.row}>
                 <DataTable.Cell style={styles.nameColumn}>
                   <View>
-                    <Text variant="bodyMedium">{user.name}</Text>
-                    <Text style={styles.email} variant="bodySmall">
+                    <Text variant="bodyMedium" style={styles.userName}>
+                      {user.name}
+                    </Text>
+                    <Text style={styles.userEmail} variant="bodySmall">
                       {user.email}
                     </Text>
                   </View>
@@ -126,28 +157,38 @@ export default function UserTable({
                   <Chip
                     compact
                     mode="outlined"
-                    textStyle={{ color: getRoleColor(user.role) }}
-                    style={{ borderColor: getRoleColor(user.role) }}
+                    textStyle={{ color: getRoleColor(user.role), fontSize: 12 }}
+                    style={[
+                      styles.roleChip,
+                      { borderColor: getRoleColor(user.role) },
+                    ]}
                   >
                     {getRoleDisplayName(user.role)}
                   </Chip>
                 </DataTable.Cell>
                 <DataTable.Cell numeric style={styles.statsColumn}>
-                  {user.joinedCoursesCount || 0}
+                  <Text style={styles.statsText}>
+                    {user.joinedCoursesCount || 0}
+                  </Text>
                 </DataTable.Cell>
                 <DataTable.Cell numeric style={styles.statsColumn}>
-                  {user.favoritesCount || 0}
+                  <Text style={styles.statsText}>
+                    {user.favoritesCount || 0}
+                  </Text>
                 </DataTable.Cell>
                 <DataTable.Cell numeric style={styles.statsColumn}>
-                  {user.wishlistCount || 0}
+                  <Text style={styles.statsText}>
+                    {user.wishlistCount || 0}
+                  </Text>
                 </DataTable.Cell>
                 <DataTable.Cell style={styles.actionColumn}>
                   <IconButton
                     icon="pencil"
                     size={20}
                     onPress={() => onEditUser(user)}
-                    iconColor="#1976D2"
+                    iconColor="#2196F3"
                     disabled={loading}
+                    style={styles.editButton}
                   />
                 </DataTable.Cell>
               </DataTable.Row>
@@ -168,18 +209,90 @@ export default function UserTable({
 }
 
 const styles = StyleSheet.create({
-  card: { margin: 16 },
-  header: { marginBottom: 16 },
-  subtitle: { color: "#666", marginTop: 4 },
-  searchbar: { marginBottom: 12 },
-  filterContainer: { flexDirection: "row", marginBottom: 16 },
-  table: { minWidth: 700 },
+  card: {
+    margin: 16,
+    backgroundColor: "#FFFFFF",
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
+  cardContent: {
+    padding: 0,
+  },
+  header: {
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F0F0F0",
+  },
+  headerTitle: {
+    color: "#333333",
+    fontWeight: "600",
+  },
+  subtitle: {
+    color: "#666666",
+    marginTop: 4,
+  },
+  searchbar: {
+    margin: 16,
+    backgroundColor: "#F9FAFB",
+    elevation: 0,
+  },
+  searchInput: {
+    color: "#333333",
+  },
+  filterContainer: {
+    flexDirection: "row",
+    paddingHorizontal: 16,
+    marginBottom: 16,
+  },
+  filterButton: {
+    borderColor: "#E0E0E0",
+  },
+  table: {
+    minWidth: 700,
+    backgroundColor: "#FFFFFF",
+  },
+  tableHeader: {
+    backgroundColor: "#F9FAFB",
+  },
+  headerText: {
+    color: "#333333",
+    fontWeight: "600",
+  },
   nameColumn: { flex: 2, minWidth: 200 },
   roleColumn: { flex: 1, minWidth: 100 },
   statsColumn: { flex: 0.5, minWidth: 80 },
   actionColumn: { flex: 0.5, minWidth: 60 },
-  row: { borderBottomWidth: 1, borderBottomColor: "#eee" },
-  email: { color: "#888", marginTop: 2 },
-  emptyContainer: { padding: 40, alignItems: "center" },
-  emptyText: { color: "#999", textAlign: "center" },
+  row: {
+    borderBottomWidth: 1,
+    borderBottomColor: "#F0F0F0",
+    paddingVertical: 8,
+  },
+  userName: {
+    color: "#333333",
+    fontWeight: "500",
+  },
+  userEmail: {
+    color: "#666666",
+    marginTop: 2,
+  },
+  roleChip: {
+    backgroundColor: "#FFFFFF",
+  },
+  statsText: {
+    color: "#333333",
+  },
+  editButton: {
+    margin: 0,
+  },
+  emptyContainer: {
+    padding: 40,
+    alignItems: "center",
+  },
+  emptyText: {
+    color: "#666666",
+    textAlign: "center",
+  },
 });

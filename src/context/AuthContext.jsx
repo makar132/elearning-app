@@ -1,7 +1,7 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { auth } from '../services/firebaseConfig';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import { createContext, useContext, useEffect, useState } from "react";
+import { auth, db } from "../services/firebaseConfig";
 
 export const AuthContext = createContext({});
 export const useAuth = () => useContext(AuthContext);
@@ -13,39 +13,47 @@ export function AuthProvider({ children }) {
 
   // get user when open app
   useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const jsonValue = await AsyncStorage.getItem('@user');
-        if (jsonValue) {
-          setUser(JSON.parse(jsonValue));
-          setIsLoading(false);
-          return;
-        }
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      setIsLoading(true);
 
-        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-          if (currentUser) {
-            const userData = {
-              uid: currentUser.uid,
-              email: currentUser.email,
-              displayName: currentUser.displayName || ''
-            };
-            setUser(userData);
-            AsyncStorage.setItem('@user', JSON.stringify(userData));
+      if (firebaseUser) {
+        try {
+          // Get user data from Firestore
+          const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
+
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+
+            // Set user with the structure expected by admin layout
+            setUser({
+              id: firebaseUser.uid,
+              name: userData.name || userData.fullName, // Handle both field names
+              email: userData.email || firebaseUser.email,
+              role: userData.role || "student", // Default to student
+              // Include the arrays for your structure
+              joinedCourses: userData.joinedCourses || [],
+              favorites: userData.favorites || [],
+              wishlist: userData.wishlist || [],
+            });
           } else {
+            // User document doesn't exist in Firestore
+            console.log("User document not found in Firestore");
             setUser(null);
-            AsyncStorage.removeItem('@user');
           }
-          setIsLoading(false);
-        });
-
-        return unsubscribe;
-      } catch (error) {
-        console.error('Failed to load user', error);
-        setIsLoading(false);
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+          setUser(null);
+        }
+      } else {
+        // User is logged out
+        setUser(null);
       }
-    };
 
-    loadUser();
+      setIsLoading(false);
+    });
+
+    // Cleanup subscription on unmount
+    return unsubscribe;
   }, []);
 
   // store user
@@ -92,8 +100,7 @@ export function AuthProvider({ children }) {
         isLoading,
         hasCompletedOnboarding,
         completeOnboarding,
-        loginUser,
-        logout
+        logout,
       }}
     >
       {children}

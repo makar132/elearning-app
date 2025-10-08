@@ -1,70 +1,103 @@
-import { useRouter } from "expo-router";
-import { useState } from "react";
-import { Alert, Button, StyleSheet, Text, TextInput, View } from "react-native";
-import { login } from "../../src/services/authService";
+import React, { useState } from 'react';
+import { View, ScrollView, TouchableOpacity } from 'react-native';
+import { Text, TextInput, Button, IconButton } from 'react-native-paper';
+import { router } from 'expo-router';
+import { authStyles, authColors } from '../../src/utils/authStyles';
 
-export default function Login() {
-  const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = async () => {
-    setLoading(true);
-    try {
-      await login(email, password);
-      router.replace("/");
-    } catch (error) {
-      Alert.alert("Login Error", error.message);
-    } finally {
-      setLoading(false);
-    }
+  const handleLogin = () => {
+    // TODO: Add login logic
+    // For now, navigate to student dashboard
+    router.replace('/(student)/dashboard');
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        autoCapitalize="none"
-        keyboardType="email-address"
-        onChangeText={setEmail}
-        value={email}
+    <ScrollView style={authStyles.container} showsVerticalScrollIndicator={false}>
+      {/* Back Button */}
+      <IconButton
+        icon="arrow-left"
+        size={24}
+        iconColor={authColors.secondary}
+        onPress={() => router.back()}
+        style={authStyles.backButton}
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry
-        onChangeText={setPassword}
-        value={password}
-      />
-      <Button
-        title={loading ? "Logging in..." : "Login"}
-        onPress={handleLogin}
-        disabled={loading}
-      />
-      <Text style={styles.link} onPress={() => router.push("/(auth)/register")}>
-        Don't have an account? Register
-      </Text>
-    </View>
-  );
-}
 
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, justifyContent: "center" },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 10,
-    marginBottom: 15,
-    borderRadius: 5,
-  },
-  link: { color: "#007bff", marginTop: 15, textAlign: "center" },
-});
+      {/* Header */}
+      <View style={authStyles.header}>
+        <Text style={authStyles.title}>Sign In</Text>
+        <Text style={authStyles.subtitle}>
+          Welcome back! Please login to your account.
+        </Text>
+      </View>
+
+      {/* Email Input */}
+      <View style={authStyles.inputContainer}>
+        <Text style={authStyles.label}>Email</Text>
+        <TextInput
+          mode="outlined"
+          placeholder="Contact@gmail.com"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          style={authStyles.input}
+          outlineColor="#E2E8F0"
+          activeOutlineColor={authColors.primary}
+        />
+      </View>
+
+      {/* Password Input */}
+      <View style={authStyles.inputContainer}>
+        <Text style={authStyles.label}>Password</Text>
+        <TextInput
+          mode="outlined"
+          placeholder="••••••••••••••••"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry={!showPassword}
+          style={authStyles.input}
+          outlineColor="#E2E8F0"
+          activeOutlineColor={authColors.primary}
+          right={
+            <TextInput.Icon
+              icon={showPassword ? 'eye-off' : 'eye'}
+              onPress={() => setShowPassword(!showPassword)}
+            />
+          }
+        />
+      </View>
+
+      {/* Forgot Password */}
+      <TouchableOpacity style={{ alignSelf: 'flex-end', marginTop: 8, marginBottom: 24 }}>
+        <Text style={[authStyles.footerLink, { fontSize: 14 }]}>
+          Forgot Password?
+        </Text>
+      </TouchableOpacity>
+
+      {/* Login Button */}
+      <Button
+        mode="contained"
+        onPress={handleLogin}
+        style={authStyles.button}
+        contentStyle={authStyles.buttonContent}
+        labelStyle={authStyles.buttonLabel}
+      >
+        SIGN IN
+      </Button>
+
+      {/* Footer */}
+      <View style={[authStyles.footer, { marginBottom: 30 }]}>
+        <Text style={authStyles.footerText}>Don't Have An Account?</Text>
+        <TouchableOpacity onPress={() => router.push('/(auth)/register')}>
+          <Text style={authStyles.footerLink}>Sign Up Here</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
+  );
+};
+
+export default Login;

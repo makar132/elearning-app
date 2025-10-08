@@ -1,17 +1,18 @@
-import { useRouter } from "expo-router";
-import { useEffect } from "react";
-import { useAuth } from "../src/context/AuthContext";
+import { useEffect } from 'react';
+import { router } from 'expo-router';
+import { View, ActivityIndicator } from 'react-native';
 
 export default function Index() {
-  const { user, loading } = useAuth();
-  const router = useRouter();
-
   useEffect(() => {
-    if (!loading) {
-      if (!user) router.replace("/(auth)/login");
-      else router.replace("profile");
-    }
-  }, [user, loading]);
+    const timer = setTimeout(() => {
+      router.replace('/onboarding');
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
 
-  return null;
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <ActivityIndicator size="large" color="#1E3A8A" />
+    </View>
+  );
 }

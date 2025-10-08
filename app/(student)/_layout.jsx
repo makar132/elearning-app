@@ -1,19 +1,22 @@
-import { Ionicons } from "@expo/vector-icons";
-import { Tabs } from "expo-router";
+import { Stack } from 'expo-router';
+import { View, StyleSheet } from 'react-native';
+import BottomNav from '../../src/components/BottomNavigation/BottomNavigation';
 
-export default function StudentLayout() {
+export default function StudentLayout({ children }) {
   return (
-    <Tabs>
-      <Tabs.Screen
-        name="dashboard"
-        options={{
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="home" size={24} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen name="courses" />
-      <Tabs.Screen name="profile" />
-    </Tabs>
+    <View style={styles.container}>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="dashboard" />
+        <Stack.Screen name="favorites" />
+        <Stack.Screen name="my-courses" />
+        <Stack.Screen name="course-details" />
+      </Stack>
+
+      <BottomNav />
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#F9FAFB' },
+});

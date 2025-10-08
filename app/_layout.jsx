@@ -1,19 +1,32 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Slot } from 'expo-router';
-import { Provider } from 'react-redux';
+import { Stack } from 'expo-router';
+import { Provider as PaperProvider } from 'react-native-paper';
+import { Provider as ReduxProvider } from 'react-redux';
 import { AuthProvider } from '../src/context/AuthContext';
 import { store } from '../src/redux/store';
-
-const queryClient = new QueryClient();
+import { StyleSheet, View } from 'react-native';
 
 export default function RootLayout() {
   return (
-    <Provider store={store}>
-      <QueryClientProvider client={queryClient}>
+    <ReduxProvider store={store}>
+      <PaperProvider>
         <AuthProvider>
-          <Slot />
+          <View style={styles.container}>
+            <Stack screenOptions={{ headerShown: false }} style={styles.stack}>
+              <Stack.Screen name="index" />
+              <Stack.Screen name="onboarding" />
+              <Stack.Screen name="(auth)" />
+              <Stack.Screen name="(student)" />
+              <Stack.Screen name="(instructor)" />
+              <Stack.Screen name="(admin)" />
+            </Stack>
+          </View>
         </AuthProvider>
-      </QueryClientProvider>
-    </Provider>
+      </PaperProvider>
+    </ReduxProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#F9FAFB' },
+  stack: { flex: 1 },
+});

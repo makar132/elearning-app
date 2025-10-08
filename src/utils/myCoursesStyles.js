@@ -14,7 +14,7 @@ export const MyCoursesStyles = StyleSheet.create({
 
 
   searchInput: {
-    height: 40,
+    height: 50,
     borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 8,

@@ -1,19 +1,16 @@
-import { router } from "expo-router";
 import { Drawer } from "expo-router/drawer";
-import { useEffect } from "react";
 import { View } from "react-native";
 import { Text } from "react-native-paper";
 import { useAuth } from "../../src/context/AuthContext";
-import { checkAdminPermission } from "../../src/utils/permissions";
 
 export default function AdminLayout() {
   const { user, isLoading } = useAuth();
 
-  useEffect(() => {
-    if (!isLoading && !checkAdminPermission(user)) {
-      router.replace("/login");
-    }
-  }, [user, isLoading]);
+  // useEffect(() => {
+  //   if (!isLoading && !checkAdminPermission(user)) {
+  //     router.replace("/login");
+  //   }
+  // }, [user, isLoading]);
 
   // Show loading while checking auth
   if (isLoading) {
@@ -25,9 +22,9 @@ export default function AdminLayout() {
   }
 
   // Redirect if not admin
-  if (!checkAdminPermission(user)) {
-    return null;
-  }
+  // if (!checkAdminPermission(user)) {
+  //   return null;
+  // }
 
   return (
     <Drawer

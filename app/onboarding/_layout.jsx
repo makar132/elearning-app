@@ -1,12 +1,17 @@
-import { Stack } from 'expo-router';
+import { Slot } from "expo-router";
+import { StyleSheet, View } from "react-native";
 
 export default function OnboardingLayout() {
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="index" />
-      <Stack.Screen name="step2" />
-      <Stack.Screen name="step3" />
-      <Stack.Screen name="complete" />
-    </Stack>
+    <View style={styles.container}>
+      <Slot />
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
+});

@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { View, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { Text, TextInput, Button, IconButton } from 'react-native-paper';
 import { router } from 'expo-router';
-import { authStyles, authColors } from '../../src/utils/authStyles';
-import { register } from '../../src/services/authService';
+import { useState } from 'react';
+import { ActivityIndicator, ScrollView, TouchableOpacity, View } from 'react-native';
+import { Button, IconButton, Text, TextInput } from 'react-native-paper';
 import Toast from 'react-native-toast-message';
+import { register } from '../../src/services/authService';
+import { authColors, authStyles } from '../../src/utils/authStyles';
 
 const SignUp = () => {
   const [fullName, setFullName] = useState('');
@@ -16,111 +16,92 @@ const SignUp = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-
-  // Regex
-  const emailRegex = /^[^\s@]+@[^\s@]+\.com+$/;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&*!]).{8,}$/;
 
-  // State for errors
+  // Validation error states
   const [fullNameError, setFullNameError] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
 
-
   const validateFullName = (text) => {
     setFullName(text);
-    if (!text || text.trim().length === 0) {
-      setFullNameError("Full name is required");
-    } else {
-      setFullNameError("");
-    }
+    setFullNameError(text.trim() ? '' : 'Full name is required');
   };
 
   const validateEmail = (text) => {
     setEmail(text);
-    if (!text) {
-      setEmailError("Email is required");
-    } else if (!emailRegex.test(text)) {
-      setEmailError("Email format is invalid");
-    } else {
-      setEmailError("");
-    }
+    if (!text) setEmailError('Email is required');
+    else if (!emailRegex.test(text)) setEmailError('Email format is invalid');
+    else setEmailError('');
   };
 
   const validatePassword = (text) => {
     setPassword(text);
-    if (!text) {
-      setPasswordError("Password is required");
-    } else if (!passwordRegex.test(text)) {
-      setPasswordError("Password must contain at least 1 uppercase, 1 lowercase, 1 number, 1 special character, min 8 chars");
-    } else {
-      setPasswordError("");
-    }
+    if (!text) setPasswordError('Password is required');
+    else if (!passwordRegex.test(text))
+      setPasswordError('Password must include uppercase, lowercase, number, special char, min 8 chars');
+    else setPasswordError('');
   };
 
   const validateConfirmPassword = (text) => {
     setConfirmPassword(text);
-    if (!text) {
-      setConfirmPasswordError("Confirm password is required");
-    } else if (text !== password) {
-      setConfirmPasswordError("Passwords do not match");
-    } else {
-      setConfirmPasswordError("");
-    }
+    if (!text) setConfirmPasswordError('Confirm password is required');
+    else if (text !== password) setConfirmPasswordError('Passwords do not match');
+    else setConfirmPasswordError('');
   };
 
-
   const handleSignUp = async () => {
-    const fullNameValid = fullName.trim().length > 0;
-    const emailValid = emailRegex.test(email);
-    const passwordValid = passwordRegex.test(password);
-    const confirmPasswordValid = password === confirmPassword;
+    validateFullName(fullName);
+    validateEmail(email);
+    validatePassword(password);
+    validateConfirmPassword(confirmPassword);
 
-    setFullNameError(fullNameValid ? "" : "Full name is required");
-    setEmailError(emailValid ? "" : "Email format is invalid");
-    setPasswordError(passwordValid ? "" : "Password must contain at least 1 uppercase, 1 lowercase, 1 number, 1 special character, min 8 chars");
-    setConfirmPasswordError(confirmPasswordValid ? "" : "Passwords do not match");
-    if (fullNameValid && emailValid && passwordValid && confirmPasswordValid) {
+    if (
+      fullNameError ||
+      emailError ||
+      passwordError ||
+      confirmPasswordError
+    ) {
+      return;
+    }
 
-      setLoading(true);
-
-      try {
-        const result = await register({ fullName, email, password, role });
-        setLoading(false);
-
-        if (result.success) {
-          // Toast.show({
-          //   type: 'success',
-          //   text1: 'Signed up successfully!',
-          //   position: 'bottom',
-          // });
-          router.replace('/login');
-        } else {
-          Toast.show({
-            type: 'error',
-            text1: 'Sign up failed. Please try again.',
-            text2: result.error,
-            position: 'bottom',
-          });
-        }
-      } catch (error) {
-        console.error(error);
+    setLoading(true);
+    try {
+      const result = await register({ fullName, email, password, role });
+      setLoading(false);
+      if (result.success) {
+        router.replace('/auth/login');
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Sign up failed. Please try again.',
+          text2: result.error,
+          position: 'bottom',
+        });
       }
+    } catch (error) {
+      setLoading(false);
+      Toast.show({
+        type: 'error',
+        text1: 'Error occurred. Please try again.',
+        text2: error.message,
+        position: 'bottom',
+      });
     }
   };
 
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="#1E3A8A" />
+        <ActivityIndicator size="large" color={authColors.primary} />
       </View>
     );
   }
 
   return (
     <ScrollView style={authStyles.container} showsVerticalScrollIndicator={false}>
-      {/* Back Button */}
       <IconButton
         icon="arrow-left"
         size={24}
@@ -129,15 +110,11 @@ const SignUp = () => {
         style={authStyles.backButton}
       />
 
-      {/* Header */}
       <View style={authStyles.header}>
         <Text style={authStyles.title}>Sign Up</Text>
-        <Text style={authStyles.subtitle}>
-          Start your learning journey now!
-        </Text>
+        <Text style={authStyles.subtitle}>Start your learning journey now!</Text>
       </View>
 
-      {/* Full Name Input */}
       <View style={authStyles.inputContainer}>
         <Text style={authStyles.label}>Full Name</Text>
         <TextInput
@@ -150,10 +127,9 @@ const SignUp = () => {
           outlineColor="#E2E8F0"
           activeOutlineColor={authColors.primary}
         />
-        {fullNameError ? <Text style={{ color: 'red', marginTop: 5 }}>{fullNameError}</Text> : null}
+        {!!fullNameError && <Text style={{ color: 'red', marginTop: 5 }}>{fullNameError}</Text>}
       </View>
 
-      {/* Email Input */}
       <View style={authStyles.inputContainer}>
         <Text style={authStyles.label}>Email Here</Text>
         <TextInput
@@ -168,10 +144,9 @@ const SignUp = () => {
           outlineColor="#E2E8F0"
           activeOutlineColor={authColors.primary}
         />
-        {emailError ? <Text style={{ color: 'red', marginTop: 5 }}>{emailError}</Text> : null}
+        {!!emailError && <Text style={{ color: 'red', marginTop: 5 }}>{emailError}</Text>}
       </View>
 
-      {/* Password Input */}
       <View style={authStyles.inputContainer}>
         <Text style={authStyles.label}>Password</Text>
         <TextInput
@@ -182,7 +157,6 @@ const SignUp = () => {
           onBlur={() => validatePassword(password)}
           secureTextEntry={!showPassword}
           style={[authStyles.input, passwordError ? { borderColor: 'red' } : null]}
-
           outlineColor="#E2E8F0"
           activeOutlineColor={authColors.primary}
           right={
@@ -192,10 +166,9 @@ const SignUp = () => {
             />
           }
         />
-        {passwordError ? <Text style={{ color: 'red', marginTop: 5 }}>{passwordError}</Text> : null}
+        {!!passwordError && <Text style={{ color: 'red', marginTop: 5 }}>{passwordError}</Text>}
       </View>
 
-      {/* Confirm Password Input */}
       <View style={authStyles.inputContainer}>
         <Text style={authStyles.label}>Confirm Password</Text>
         <TextInput
@@ -215,11 +188,9 @@ const SignUp = () => {
             />
           }
         />
-        {confirmPasswordError ? <Text style={{ color: 'red', marginTop: 5 }}>{confirmPasswordError}</Text> : null}
+        {!!confirmPasswordError && <Text style={{ color: 'red', marginTop: 5 }}>{confirmPasswordError}</Text>}
       </View>
 
-
-      {/* Sign Up Button */}
       <Button
         mode="contained"
         onPress={handleSignUp}
@@ -230,10 +201,9 @@ const SignUp = () => {
         SIGN UP
       </Button>
 
-      {/* Footer */}
       <View style={[authStyles.footer, { marginBottom: 30 }]}>
-        <Text style={authStyles.footerText}>Already Have An Account ?</Text>
-        <TouchableOpacity onPress={() => router.push('/(auth)/login')}>
+        <Text style={authStyles.footerText}>{"Already have an account?"}</Text>
+        <TouchableOpacity onPress={() => router.replace('/auth/login')}>
           <Text style={authStyles.footerLink}>Sign In Here</Text>
         </TouchableOpacity>
       </View>

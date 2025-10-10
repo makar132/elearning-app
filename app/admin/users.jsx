@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import {
-    Alert,
-    RefreshControl,
-    ScrollView,
-    StyleSheet,
-    View,
+  Alert,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  View,
 } from "react-native";
 import { ActivityIndicator, FAB, Snackbar, Text } from "react-native-paper";
 import EditUserModal from "../../src/components/admin/EditUserModal";
 import UserTable from "../../src/components/admin/UserTable";
 import { adminService } from "../../src/services/adminService";
+import theme, { Colors } from "../../src/styles/theme";
 
 export default function UsersScreen() {
   const [users, setUsers] = useState([]);
@@ -49,37 +50,29 @@ export default function UsersScreen() {
 
   const onUserUpdated = () => {
     setModalVisible(false);
-    setSelectedUser(null);
     loadUsers();
     setSnackbarMsg("User updated successfully");
     setSnackbarVisible(true);
   };
 
   return (
-    <View style={styles.container}>
+    <View style={theme.container}>
       {loading && !refreshing ? (
         <View style={styles.centered}>
-          <ActivityIndicator size="large" color="#2196F3" />
-          <Text style={styles.loadingText}>Loading users...</Text>
+          <ActivityIndicator size="large" color={Colors.primary} />
+          <Text>Loading users...</Text>
         </View>
       ) : (
         <ScrollView
           style={styles.scroll}
-          showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
         >
-          {/* Header */}
           <View style={styles.header}>
-            <Text variant="headlineMedium" style={styles.title}>
-              Users
-            </Text>
-            <Text variant="bodyMedium" style={styles.subtitle}>
-              {users.length} total users
-            </Text>
+            <Text variant="headlineLarge">Users</Text>
+            <Text variant="bodyMedium">{users.length} total users</Text>
           </View>
-
           <UserTable
             users={users}
             onEditUser={onEditUser}
@@ -89,29 +82,19 @@ export default function UsersScreen() {
             onRoleChange={setRoleFilter}
             loading={loading}
           />
-
-          <View style={styles.bottomSpacing} />
         </ScrollView>
       )}
 
       <FAB
-        icon="account-plus"
+        icon="plus"
         label="Add User"
-        onPress={() =>
-          Alert.alert(
-            "Coming Soon",
-            "User creation feature will be available soon."
-          )
-        }
+        onPress={() => Alert.alert("Not implemented")}
         style={styles.fab}
       />
 
       <EditUserModal
         visible={modalVisible}
-        onDismiss={() => {
-          setModalVisible(false);
-          setSelectedUser(null);
-        }}
+        onDismiss={() => setModalVisible(false)}
         user={selectedUser}
         onUserUpdated={onUserUpdated}
       />
@@ -120,7 +103,6 @@ export default function UsersScreen() {
         visible={snackbarVisible}
         onDismiss={() => setSnackbarVisible(false)}
         duration={3000}
-        style={styles.snackbar}
       >
         {snackbarMsg}
       </Snackbar>
@@ -129,47 +111,14 @@ export default function UsersScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#FFFFFF",
-  },
-  scroll: {
-    flex: 1,
-  },
-  centered: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#FFFFFF",
-  },
-  loadingText: {
-    marginTop: 16,
-    color: "#666666",
-  },
-  header: {
-    padding: 20,
-    backgroundColor: "#FFFFFF",
-    borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
-  },
-  title: {
-    color: "#2196F3",
-    fontWeight: "600",
-    marginBottom: 4,
-  },
-  subtitle: {
-    color: "#666666",
-  },
-  bottomSpacing: {
-    height: 80,
-  },
+  container: { flex: 1, backgroundColor: "#f5f5f5" },
+  scroll: { flex: 1 },
+  centered: { flex: 1, justifyContent: "center", alignItems: "center" },
+  header: { padding: 16, borderBottomWidth: 1, borderBottomColor: "#ddd" },
   fab: {
     position: "absolute",
     right: 16,
     bottom: 16,
     backgroundColor: "#2196F3",
-  },
-  snackbar: {
-    backgroundColor: "#4CAF50",
   },
 });

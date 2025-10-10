@@ -1,14 +1,13 @@
-import React from 'react';
-import { View, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 export default function BottomNav({ active }) {
   return (
     <View style={styles.bottomNavContainer}>
       <View style={styles.bottomNav}>
         <TouchableOpacity
-          onPress={() => router.push('/(student)/dashboard')}
+          onPress={() => router.push('/student/dashboard')}
           style={styles.navItem}
           activeOpacity={0.7}
         >
@@ -16,7 +15,7 @@ export default function BottomNav({ active }) {
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={() => router.push('/(student)/my-courses')}
+          onPress={() => router.push('/student/my-courses')}
           style={styles.navItem}
           activeOpacity={0.7}
         >
@@ -24,7 +23,7 @@ export default function BottomNav({ active }) {
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={() => router.push('/(student)/favorites')}
+          onPress={() => router.push('/student/favorites')}
           style={styles.navItem}
           activeOpacity={0.7}
         >
@@ -32,7 +31,7 @@ export default function BottomNav({ active }) {
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={() => router.push('/(student)/profile')}
+          onPress={() => router.push('/student/profile')}
           style={styles.navItem}
           activeOpacity={0.7}
         >

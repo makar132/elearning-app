@@ -1,10 +1,9 @@
-import React from 'react';
-import { View, ScrollView, Image, SafeAreaView, TouchableOpacity } from 'react-native';
-import { Text, Card, IconButton } from 'react-native-paper';
-import { useSelector, useDispatch } from 'react-redux';
-import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import styles from '../../src/utils/favoritesStyles'; 
+import { router } from 'expo-router';
+import { Image, SafeAreaView, ScrollView, TouchableOpacity, View } from 'react-native';
+import { Card, IconButton, Text } from 'react-native-paper';
+import { useDispatch, useSelector } from 'react-redux';
+import styles from '../../src/utils/favoritesStyles';
 
 export default function Favorites() {
   const favoriteCourses = useSelector((state) => state.favorites.favoriteCourses);
@@ -28,13 +27,13 @@ export default function Favorites() {
 
         {/* Bottom Navigation */}
         <View style={styles.bottomNav}>
-          <TouchableOpacity style={styles.navItem} onPress={() => router.push('/(student)/dashboard')}>
+          <TouchableOpacity style={styles.navItem} onPress={() => router.push('/student/dashboard')}>
             <Ionicons name="home" size={24} color="#93A5C5" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.navItem} onPress={() => router.push('/(student)/my-courses')}>
+          <TouchableOpacity style={styles.navItem} onPress={() => router.push('/student/my-courses')}>
             <Ionicons name="book" size={24} color="#93A5C5" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.navItem} onPress={() => router.push('/(student)/favorites')}>
+          <TouchableOpacity style={styles.navItem} onPress={() => router.push('/student/favorites')}>
             <Ionicons name="heart" size={24} color="#FFFFFF" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.navItem}>
@@ -89,13 +88,13 @@ export default function Favorites() {
 
       {/* Bottom Navigation */}
       <View style={styles.bottomNav}>
-        <TouchableOpacity style={styles.navItem} onPress={() => router.push('/(student)/dashboard')}>
+        <TouchableOpacity style={styles.navItem} onPress={() => router.push('/student/dashboard')}>
           <Ionicons name="home" size={24} color="#93A5C5" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem} onPress={() => router.push('/(student)/my-courses')}>
+        <TouchableOpacity style={styles.navItem} onPress={() => router.push('/student/my-courses')}>
           <Ionicons name="book" size={24} color="#93A5C5" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem} onPress={() => router.push('/(student)/favorites')}>
+        <TouchableOpacity style={styles.navItem} onPress={() => router.push('/student/favorites')}>
           <Ionicons name="heart" size={24} color="#FFFFFF" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem}>

@@ -1,28 +1,28 @@
-import React from 'react';
-import { View } from 'react-native';
-import { Text, Button, IconButton } from 'react-native-paper';
-import LottieView from 'lottie-react-native';
-import { router } from 'expo-router';
-import { onboardingStyles as styles, colors } from '../../src/utils/onboardingStyles';
+import { router } from "expo-router";
+import LottieView from "lottie-react-native";
+import { View } from "react-native";
+import { Button, IconButton, Text } from "react-native-paper";
+import {
+  colors,
+  onboardingStyles as styles,
+} from "../../src/utils/onboardingStyles";
 
-const Onboarding3 = () => {
-  const handleGetStarted = () => {
-    router.push('/onboarding/complete');
+export default function Onboarding3() {
+  const handleComplete = () => {
+    router.replace("/auth");
   };
 
   return (
     <View style={[styles.container, { backgroundColor: colors.onboarding3 }]}>
-      {/* Skip Button */}
       <Button
         mode="text"
-        onPress={handleGetStarted}
+        onPress={handleComplete} // Skip to auth
         style={styles.skipButton}
         textColor={colors.skipText}
       >
         SKIP
       </Button>
 
-      {/* Back Button */}
       <IconButton
         icon="arrow-left"
         size={24}
@@ -31,40 +31,34 @@ const Onboarding3 = () => {
         onPress={() => router.back()}
       />
 
-      {/* Animation */}
       <View style={styles.animationContainer}>
         <LottieView
-          source={require('../../assets/animations/onboarding3.json')}
+          source={require("../../assets/animations/onboarding3.json")}
           autoPlay
           loop
           style={styles.animation}
         />
       </View>
 
-      {/* Text Content */}
       <View style={styles.textContainer}>
         <Text variant="headlineMedium" style={styles.title}>
-          Start Your Journey Now
+          Start Your Learning Journey Now
         </Text>
         <Text variant="bodyLarge" style={styles.description}>
           Join thousands of learners and shoppers today
         </Text>
       </View>
 
-      {/* Bottom Section */}
       <View style={styles.bottomContainer}>
-        {/* Dots */}
         <View style={styles.pagination}>
           <View style={styles.dot} />
           <View style={styles.dot} />
           <View style={[styles.dot, styles.activeDot]} />
-          <View style={styles.dot} />
         </View>
 
-        {/* Get Started Button */}
         <Button
           mode="contained"
-          onPress={handleGetStarted}
+          onPress={handleComplete}
           style={styles.button}
           contentStyle={styles.buttonContent}
         >
@@ -73,6 +67,4 @@ const Onboarding3 = () => {
       </View>
     </View>
   );
-};
-
-export default Onboarding3;
+}

@@ -1,17 +1,23 @@
-import React from 'react';
-import { View } from 'react-native';
-import { Text, Button, IconButton } from 'react-native-paper';
-import LottieView from 'lottie-react-native';
-import { router } from 'expo-router';
-import { onboardingStyles as styles, colors } from '../../src/utils/onboardingStyles';
+import { router } from "expo-router";
+import LottieView from "lottie-react-native";
+import { View } from "react-native";
+import { Button, IconButton, Text } from "react-native-paper";
+import {
+  colors,
+  onboardingStyles as styles,
+} from "../../src/utils/onboardingStyles";
 
 const Onboarding2 = () => {
+  const handleComplete = () => {
+    router.replace("/auth");
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: colors.onboarding2 }]}>
       {/* Skip Button */}
       <Button
         mode="text"
-        onPress={() => router.replace('/(student)/dashboard')}
+        onPress={handleComplete}
         style={styles.skipButton}
         textColor={colors.skipText}
       >
@@ -30,7 +36,7 @@ const Onboarding2 = () => {
       {/* Animation */}
       <View style={styles.animationContainer}>
         <LottieView
-          source={require('../../assets/animations/onboarding2.json')}
+          source={require("../../assets/animations/onboarding2.json")}
           autoPlay
           loop
           style={styles.animation}
@@ -60,7 +66,7 @@ const Onboarding2 = () => {
         {/* Continue Button */}
         <Button
           mode="contained"
-          onPress={() => router.push('/onboarding/step3')}
+          onPress={() => router.push("/onboarding/step3")}
           style={styles.button}
           contentStyle={styles.buttonContent}
         >

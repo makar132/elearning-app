@@ -26,7 +26,7 @@ const Login = () => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.com+$/;
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&*!]).{8,}$/;
 
-  //  validate
+  // validate
   const validateEmail = (text) => {
     setEmail(text);
     if (!text) setEmailError("Email is required");
@@ -45,7 +45,6 @@ const Login = () => {
   };
 
   const handleLogin = async () => {
-    // validate
     validateEmail(email);
     validatePassword(password);
 
@@ -56,17 +55,13 @@ const Login = () => {
     try {
       const result = await login(email, password);
       setLoading(false);
-      console.log("Login result:", result);
       if (result.success) {
         loginUser(result.user);
-        // Toast.show({
-        //   type: 'success',
-        //   text1: 'Logged in successfully!',
-        //   position: 'bottom',
-        // });
         // Redirect
         router.replace(
-          result.user.role === "student" ? "/(student)/my-courses" : "/(admin)/"
+          result.user.role === "student"
+            ? "/student/"
+            : "/admin/"
         );
       } else {
         Toast.show({
@@ -78,7 +73,6 @@ const Login = () => {
       }
     } catch (err) {
       setLoading(false);
-      console.error(err);
       Toast.show({
         type: "error",
         text1: "An error occurred. Please try again.",
@@ -97,10 +91,7 @@ const Login = () => {
   }
 
   return (
-    <ScrollView
-      style={authStyles.container}
-      showsVerticalScrollIndicator={false}
-    >
+    <ScrollView style={authStyles.container} showsVerticalScrollIndicator={false}>
       {/* Back Button */}
       <IconButton
         icon="arrow-left"
@@ -110,7 +101,6 @@ const Login = () => {
         style={authStyles.backButton}
       />
 
-      {/* Header */}
       <View style={authStyles.header}>
         <Text style={authStyles.title}>Sign In</Text>
         <Text style={authStyles.subtitle}>
@@ -118,7 +108,6 @@ const Login = () => {
         </Text>
       </View>
 
-      {/* Email Input */}
       <View style={authStyles.inputContainer}>
         <Text style={authStyles.label}>Email</Text>
         <TextInput
@@ -138,7 +127,6 @@ const Login = () => {
         ) : null}
       </View>
 
-      {/* Password Input */}
       <View style={authStyles.inputContainer}>
         <Text style={authStyles.label}>Password</Text>
         <TextInput
@@ -166,16 +154,10 @@ const Login = () => {
         ) : null}
       </View>
 
-      {/* Forgot Password */}
-      <TouchableOpacity
-        style={{ alignSelf: "flex-end", marginTop: 8, marginBottom: 24 }}
-      >
-        <Text style={[authStyles.footerLink, { fontSize: 14 }]}>
-          Forgot Password?
-        </Text>
+      <TouchableOpacity style={{ alignSelf: "flex-end", marginTop: 8, marginBottom: 24 }}>
+        <Text style={[authStyles.footerLink, { fontSize: 14 }]}>Forgot Password?</Text>
       </TouchableOpacity>
 
-      {/* Login Button */}
       <Button
         mode="contained"
         onPress={handleLogin}
@@ -186,10 +168,9 @@ const Login = () => {
         SIGN IN
       </Button>
 
-      {/* Footer */}
       <View style={[authStyles.footer, { marginBottom: 30 }]}>
         <Text style={authStyles.footerText}>{"Don't Have An Account?"}</Text>
-        <TouchableOpacity onPress={() => router.push("/(auth)/register")}>
+        <TouchableOpacity onPress={() => router.push("/auth/register")}>
           <Text style={authStyles.footerLink}>Sign Up Here</Text>
         </TouchableOpacity>
       </View>

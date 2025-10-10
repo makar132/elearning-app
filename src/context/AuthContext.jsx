@@ -1,5 +1,4 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { signOut as firebaseSignOut, onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { createContext, useContext, useEffect, useState } from "react";
 import { auth, db } from "../services/firebaseConfig";
@@ -9,94 +8,87 @@ export const useAuth = () => useContext(AuthContext);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [role, setRole] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
 
-  // get user when open app
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setIsLoading(true);
 
       if (firebaseUser) {
         try {
-          // Get user data from Firestore
-          const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
-
-          if (userDoc.exists()) {
-            const userData = userDoc.data();
-
-            // Set user with the structure expected by admin layout
-            setUser({
+          const snapshot = await getDoc(doc(db, "users", firebaseUser.uid));
+          if (snapshot.exists()) {
+            const data = snapshot.data();
+            const userData = {
               id: firebaseUser.uid,
-              name: userData.name || userData.fullName, // Handle both field names
-              email: userData.email || firebaseUser.email,
-              role: userData.role || "student", // Default to student
-              // Include the arrays for your structure
-              joinedCourses: userData.joinedCourses || [],
-              favorites: userData.favorites || [],
-              wishlist: userData.wishlist || [],
-            });
+              name: data.name || data.fullName || "",
+              email: data.email || firebaseUser.email || "",
+              role: data.role || "student",
+              joinedCourses: data.joinedCourses || [],
+              favorites: data.favorites || [],
+              wishlist: data.wishlist || [],
+            };
+            setUser(userData);
+            setRole(userData.role);
           } else {
-            // User document doesn't exist in Firestore
-            console.log("User document not found in Firestore");
             setUser(null);
+            setRole(null);
           }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
+        } catch (err) {
+          console.error("Error loading user profile:", err);
           setUser(null);
+          setRole(null);
         }
       } else {
-        // User is logged out
         setUser(null);
+        setRole(null);
       }
 
       setIsLoading(false);
     });
 
-    // Cleanup subscription on unmount
     return unsubscribe;
   }, []);
 
-  // store user
-  const loginUser = async (firebaseUser) => {
-    console.log("firebaseUser: ", firebaseUser);
-    if (!firebaseUser) return;
+  const loginUser = (firebaseUser) => {
+    // Called after register or login to set local state immediately
+    console.log("Login user:", firebaseUser);
     const userData = {
-      uid: firebaseUser.uid,
-      email: firebaseUser.email,
-      displayName: firebaseUser.displayName || "",
+      id: firebaseUser.uid,
+      name: firebaseUser.displayName || "",
+      email: firebaseUser.email || "",
       role: firebaseUser.role || "student",
-      joinedCourses: [],
-      favorites: [],
-      wishlist: [],
-      createdAt: new Date(),
+      joinedCourses:firebaseUser.joinedCourses || [],
+      favorites: firebaseUser.favorites || [],
+      wishlist: firebaseUser.wishlist || [],
     };
     setUser(userData);
-    await AsyncStorage.setItem("@user", JSON.stringify(userData));
+    setRole(userData.role);
   };
 
-  // logout
   const logout = async () => {
     try {
-      await signOut(auth);
-      setUser(null);
-      await AsyncStorage.removeItem("@user");
-    } catch (error) {
-      console.error("Logout Error:", error);
+      await firebaseSignOut(auth);
+    } catch (e) {
+      console.error("Logout error:", e);
     }
+    setUser(null);
+    setRole(null);
   };
 
-  // onboarding
   const completeOnboarding = () => setHasCompletedOnboarding(true);
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        loginUser,
+        role,
         isLoading,
         hasCompletedOnboarding,
         completeOnboarding,
+        loginUser,
         logout,
       }}
     >

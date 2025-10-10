@@ -19,6 +19,7 @@ export default function RootLayout() {
               <Stack.Screen name="student" />
               <Stack.Screen name="instructor" />
               <Stack.Screen name="admin" />
+              <Stack.Screen name="aiChat" />
             </Stack>
             <Toast />
           </View>

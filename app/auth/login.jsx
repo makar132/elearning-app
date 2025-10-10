@@ -1,176 +1,69 @@
-import { router } from "expo-router";
-import { useState } from "react";
-import {
-  ActivityIndicator,
-  ScrollView,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { Button, IconButton, Text, TextInput } from "react-native-paper";
-import Toast from "react-native-toast-message";
-import { useAuth } from "../../src/context/AuthContext";
-import { login } from "../../src/services/authService";
-import { authColors, authStyles } from "../../src/utils/authStyles";
+import React, { useState } from 'react';
+import { ScrollView, View, ActivityIndicator, TouchableOpacity, Text } from 'react-native';
+import { Button, IconButton } from 'react-native-paper';
+import { router } from 'expo-router';
+import Toast from 'react-native-toast-message';
+import { Formik } from 'formik';
+import InputField from '../../src/components/Auth/InputField.jsx';
+import { login } from '../../src/services/authService.js';
+import { authStyles, authColors } from '../../src/utils/authStyles.js';
+import { LoginSchema } from '../../src/utils/validation.js';
+import { useAuth } from '../../src/context/AuthContext.jsx';
 
 const Login = () => {
   const { loginUser } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-
-  // Regex
-  const emailRegex = /^[^\s@]+@[^\s@]+\.com+$/;
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&*!]).{8,}$/;
-
-  // validate
-  const validateEmail = (text) => {
-    setEmail(text);
-    if (!text) setEmailError("Email is required");
-    else if (!emailRegex.test(text)) setEmailError("Email format is invalid");
-    else setEmailError("");
-  };
-
-  const validatePassword = (text) => {
-    setPassword(text);
-    if (!text) setPasswordError("Password is required");
-    else if (!passwordRegex.test(text))
-      setPasswordError(
-        "Password must contain at least 1 uppercase, 1 lowercase, 1 number, 1 special character, min 8 chars"
-      );
-    else setPasswordError("");
-  };
-
-  const handleLogin = async () => {
-    validateEmail(email);
-    validatePassword(password);
-
-    if (emailError || passwordError) return;
-
+  const handleLogin = async (values) => {
     setLoading(true);
-
     try {
-      const result = await login(email, password);
+      const result = await login(values.email, values.password);
       setLoading(false);
       if (result.success) {
         loginUser(result.user);
-        // Redirect
-        router.replace(
-          result.user.role === "student"
-            ? "/student/"
-            : "/admin/"
-        );
+        router.replace(result.user.role==='student'?'/student/':'/admin/');
       } else {
-        Toast.show({
-          type: "error",
-          text1: "Login failed. Please try again.",
-          text2: result.error,
-          position: "bottom",
-        });
+        Toast.show({ type:'error', text1:'Login failed', text2:result.error, position:'bottom' });
       }
     } catch (err) {
       setLoading(false);
-      Toast.show({
-        type: "error",
-        text1: "An error occurred. Please try again.",
-        text2: err.message,
-        position: "bottom",
-      });
+      Toast.show({ type:'error', text1:'An error occurred', text2:err.message, position:'bottom' });
     }
   };
 
-  if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color={authColors.primary} />
-      </View>
-    );
-  }
+  if (loading) return (
+    <View style={{ flex:1, justifyContent:'center', alignItems:'center' }}>
+      <ActivityIndicator size="large" color={authColors.primary}/>
+    </View>
+  );
 
   return (
     <ScrollView style={authStyles.container} showsVerticalScrollIndicator={false}>
-      {/* Back Button */}
-      <IconButton
-        icon="arrow-left"
-        size={24}
-        iconColor={authColors.secondary}
-        onPress={() => router.back()}
-        style={authStyles.backButton}
-      />
-
+      <IconButton icon="arrow-left" size={24} iconColor={authColors.secondary} onPress={() => router.back()} style={authStyles.backButton}/>
       <View style={authStyles.header}>
         <Text style={authStyles.title}>Sign In</Text>
-        <Text style={authStyles.subtitle}>
-          Welcome back! Please login to your account.
-        </Text>
+        <Text style={authStyles.subtitle}>Welcome back! Please login to your account.</Text>
       </View>
 
-      <View style={authStyles.inputContainer}>
-        <Text style={authStyles.label}>Email</Text>
-        <TextInput
-          mode="outlined"
-          placeholder="Contact@gmail.com"
-          value={email}
-          onChangeText={validateEmail}
-          onBlur={() => validateEmail(email)}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          style={[authStyles.input, emailError ? { borderColor: "red" } : null]}
-          outlineColor="#E2E8F0"
-          activeOutlineColor={authColors.primary}
-        />
-        {emailError ? (
-          <Text style={{ color: "red", marginTop: 5 }}>{emailError}</Text>
-        ) : null}
-      </View>
+      <Formik initialValues={{ email:'', password:'' }} validationSchema={LoginSchema} onSubmit={handleLogin}>
+        {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+          <>
+            <InputField label="Email" placeholder="contact@gmail.com" value={values.email} onChangeText={handleChange('email')} onBlur={handleBlur('email')} error={touched.email && errors.email} />
+            <InputField label="Password" placeholder="••••••••" value={values.password} onChangeText={handleChange('password')} onBlur={handleBlur('password')} secureTextEntry={!showPassword} toggleSecureEntry={() => setShowPassword(!showPassword)} error={touched.password && errors.password} />
 
-      <View style={authStyles.inputContainer}>
-        <Text style={authStyles.label}>Password</Text>
-        <TextInput
-          mode="outlined"
-          placeholder="••••••••••••••••"
-          value={password}
-          onChangeText={validatePassword}
-          onBlur={() => validatePassword(password)}
-          secureTextEntry={!showPassword}
-          style={[
-            authStyles.input,
-            passwordError ? { borderColor: "red" } : null,
-          ]}
-          outlineColor="#E2E8F0"
-          activeOutlineColor={authColors.primary}
-          right={
-            <TextInput.Icon
-              icon={showPassword ? "eye-off" : "eye"}
-              onPress={() => setShowPassword(!showPassword)}
-            />
-          }
-        />
-        {passwordError ? (
-          <Text style={{ color: "red", marginTop: 5 }}>{passwordError}</Text>
-        ) : null}
-      </View>
+            {/* <TouchableOpacity style={{ alignSelf:'flex-end', marginTop:8, marginBottom:24 }}>
+              <Text style={[authStyles.footerLink, { fontSize:14 }]}>Forgot Password?</Text>
+            </TouchableOpacity> */}
 
-      <TouchableOpacity style={{ alignSelf: "flex-end", marginTop: 8, marginBottom: 24 }}>
-        <Text style={[authStyles.footerLink, { fontSize: 14 }]}>Forgot Password?</Text>
-      </TouchableOpacity>
+            <Button mode="contained" onPress={handleSubmit} style={authStyles.button} contentStyle={authStyles.buttonContent} labelStyle={authStyles.buttonLabel}>SIGN IN</Button>
+          </>
+        )}
+      </Formik>
 
-      <Button
-        mode="contained"
-        onPress={handleLogin}
-        style={authStyles.button}
-        contentStyle={authStyles.buttonContent}
-        labelStyle={authStyles.buttonLabel}
-      >
-        SIGN IN
-      </Button>
-
-      <View style={[authStyles.footer, { marginBottom: 30 }]}>
-        <Text style={authStyles.footerText}>{"Don't Have An Account?"}</Text>
-        <TouchableOpacity onPress={() => router.push("/auth/register")}>
+      <View style={[authStyles.footer, { marginBottom:30 }]}>
+        <Text style={authStyles.footerText}>{`Don't Have An Account?`}</Text>
+        <TouchableOpacity onPress={() => router.push('/auth/register')}>
           <Text style={authStyles.footerLink}>Sign Up Here</Text>
         </TouchableOpacity>
       </View>

@@ -96,3 +96,17 @@ export const courseService = {
     }
   }
 };
+
+ /**
+   * Get joined courses
+   */
+export const fetchJoinedCourses = async (userId) => {
+  try {
+    const userDoc = await getDoc(doc(db, 'users', userId));
+    if (userDoc.exists()) return userDoc.data().joinedCourses || [];
+    return [];
+  } catch (err) {
+    console.error("Error fetching joined courses:", err);
+    return [];
+  }
+};

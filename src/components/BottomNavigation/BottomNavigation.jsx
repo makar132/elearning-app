@@ -31,6 +31,14 @@ export default function BottomNav({ active }) {
         </TouchableOpacity>
 
         <TouchableOpacity
+          onPress={() => router.push('/aiChat')}
+          style={styles.navItem}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="chatbubble" size={24} color={active === 'aiChat' ? '#FFFFFF' : '#93A5C5'} />
+        </TouchableOpacity>
+
+        <TouchableOpacity
           onPress={() => router.push('/student/profile')}
           style={styles.navItem}
           activeOpacity={0.7}

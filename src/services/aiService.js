@@ -1,7 +1,7 @@
 import { OPENAI_API_KEY } from "../../secret.js";
 
 export const chatWithAI = async ({ message, joinedCourses = [], allCourses = [] }) => {
-  // نستخدم عناوين الكورسات المضافة للـ AI
+  // add joined courses to AI
   const joinedTitles = joinedCourses.map(c => c.title || c);
 
   const systemPrompt = `

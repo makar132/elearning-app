@@ -37,7 +37,7 @@ export function useChat() {
 
     setJoinedCourses(joined);
 
-    // نحول كل الكورسات لمعلومات مفيدة للـ AI
+    // all info about courses
     const allCourseInfo = all.map(c => ({
       id: c.id,
       title: c.title,
@@ -84,6 +84,7 @@ export function useChat() {
   useEffect(() => {
     loadChat();
     loadCourses();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   return { messages, input, setInput, handleSend, clearChat, loading };

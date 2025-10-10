@@ -1,3 +1,5 @@
+'use client';
+
 import { Stack } from "expo-router";
 import { StyleSheet, View } from "react-native";
 import { Provider as PaperProvider } from "react-native-paper";
@@ -19,7 +21,14 @@ export default function RootLayout() {
               <Stack.Screen name="student" />
               <Stack.Screen name="instructor" />
               <Stack.Screen name="admin" />
-              <Stack.Screen name="aiChat" />
+              <Stack.Screen
+                options={{
+                  title: "AI Chat",
+                  headerShown: true,
+                  headerTitleStyle: { fontSize: 18, fontWeight: "bold" },
+                }}
+                name="aiChat"
+              />
             </Stack>
             <Toast />
           </View>

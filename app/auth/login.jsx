@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { ScrollView, View, ActivityIndicator, TouchableOpacity, Text } from 'react-native';
-import { Button, IconButton } from 'react-native-paper';
 import { router } from 'expo-router';
-import Toast from 'react-native-toast-message';
 import { Formik } from 'formik';
+import { useState } from 'react';
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Button, IconButton } from 'react-native-paper';
+import Toast from 'react-native-toast-message';
 import InputField from '../../src/components/Auth/InputField.jsx';
-import { login } from '../../src/services/authService.js';
-import { authStyles, authColors } from '../../src/utils/authStyles.js';
-import { LoginSchema } from '../../src/utils/validation.js';
 import { useAuth } from '../../src/context/AuthContext.jsx';
+import { login } from '../../src/services/authService.js';
+import { authColors, authStyles } from '../../src/utils/authStyles.js';
+import { LoginSchema } from '../../src/utils/validation.js';
 
 const Login = () => {
   const { loginUser } = useAuth();
@@ -21,7 +21,7 @@ const Login = () => {
       const result = await login(values.email, values.password);
       setLoading(false);
       if (result.success) {
-        loginUser(result.user);
+        // loginUser(result.user);
         router.replace(result.user.role==='student'?'/student/':'/admin/');
       } else {
         Toast.show({ type:'error', text1:'Login failed', text2:result.error, position:'bottom' });

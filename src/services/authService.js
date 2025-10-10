@@ -55,3 +55,14 @@ export const login = async (email, password) => {
     return { success: false, error: error.message };
   }
 };
+
+// logout
+export const logout = async () => {
+  try {
+    await auth.signOut();
+    return { success: true };
+  } catch (error) {
+    console.error('Logout Error:', error.message);
+    return { success: false, error: error.message };
+  }
+};

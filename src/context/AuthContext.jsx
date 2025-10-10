@@ -14,6 +14,7 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      console.log("Auth state changed:", firebaseUser);
       setIsLoading(true);
 
       if (firebaseUser) {
@@ -55,17 +56,18 @@ export function AuthProvider({ children }) {
   const loginUser = (firebaseUser) => {
     // Called after register or login to set local state immediately
     console.log("Login user:", firebaseUser);
-    const userData = {
-      id: firebaseUser.uid,
-      name: firebaseUser.displayName || "",
-      email: firebaseUser.email || "",
-      role: firebaseUser.role || "student",
-      joinedCourses:firebaseUser.joinedCourses || [],
-      favorites: firebaseUser.favorites || [],
-      wishlist: firebaseUser.wishlist || [],
-    };
-    setUser(userData);
-    setRole(userData.role);
+    // const userData = {
+    //   id: firebaseUser.uid,
+    //   name: firebaseUser.displayName || "",
+    //   email: firebaseUser.email || "",
+    //   role: firebaseUser.role || "student",
+    //   joinedCourses:firebaseUser.joinedCourses || [],
+    //   favorites: firebaseUser.favorites || [],
+    //   wishlist: firebaseUser.wishlist || [],
+    // };
+    // setUser(userData);
+    // setRole(userData.role);
+    // setIsLoading(false);
   };
 
   const logout = async () => {
@@ -74,8 +76,8 @@ export function AuthProvider({ children }) {
     } catch (e) {
       console.error("Logout error:", e);
     }
-    setUser(null);
-    setRole(null);
+    // setUser(null);
+    // setRole(null);
   };
 
   const completeOnboarding = () => setHasCompletedOnboarding(true);

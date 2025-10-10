@@ -88,8 +88,12 @@ export default function CoursesScreen() {
           }
         >
           <View style={styles.header}>
-            <Text variant="headlineLarge">Courses</Text>
-            <Text variant="bodyMedium">{courses.length} courses available</Text>
+            <Text variant="headlineLarge" style={styles.title}>
+              Courses
+            </Text>
+            <Text variant="bodyMedium" style={styles.subtitle}>
+              {courses.length} courses available
+            </Text>
           </View>
 
           <CourseTable
@@ -128,6 +132,8 @@ const styles = StyleSheet.create({
   scroll: { flex: 1 },
   centered: { flex: 1, justifyContent: "center", alignItems: "center" },
   header: { padding: 16, borderBottomWidth: 1, borderBottomColor: "#ddd" },
+  title: { color: "#1E3A8A", marginBottom: 4 },
+  subtitle: { color: "#666" },
   fab: {
     position: "absolute",
     bottom: 16,

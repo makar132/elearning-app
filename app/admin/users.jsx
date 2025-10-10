@@ -1,20 +1,17 @@
-import { useEffect, useState } from "react";
-import {
-  Alert,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  View,
-} from "react-native";
+import { useMemo, useState } from "react";
+import { Alert, ScrollView, StyleSheet, View } from "react-native";
 import { ActivityIndicator, FAB, Snackbar, Text } from "react-native-paper";
 import EditUserModal from "../../src/components/admin/EditUserModal";
 import UserTable from "../../src/components/admin/UserTable";
-import { adminService } from "../../src/services/adminService";
+import Pagination from "../../src/components/Pagination";
+import { useFirestoreCollection } from "../../src/hooks/useFirestoreCollection";
 import theme, { Colors } from "../../src/styles/theme";
 
+const PAGE_SIZE = 10;
+
 export default function UsersScreen() {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(false);
+  // const [users, setUsers] = useState([]);
+  // const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
@@ -22,26 +19,35 @@ export default function UsersScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMsg, setSnackbarMsg] = useState("");
+  const { data: users, loading } = useFirestoreCollection("users");
 
-  const loadUsers = async (isRefresh = false) => {
-    try {
-      if (isRefresh) setRefreshing(true);
-      else setLoading(true);
-      const data = await adminService.getAllUsers();
-      setUsers(data);
-    } catch (error) {
-      Alert.alert("Error", "Failed to load users: " + error.message);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  };
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(users.length / PAGE_SIZE);
 
-  useEffect(() => {
-    loadUsers();
-  }, []);
+  const currentUsers = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return users.slice(start, start + PAGE_SIZE);
+  }, [users, currentPage]);
 
-  const onRefresh = () => loadUsers(true);
+  // const loadUsers = async (isRefresh = false) => {
+  //   try {
+  //     if (isRefresh) setRefreshing(true);
+  //     else setLoading(true);
+  //     const data = await adminService.getAllUsers();
+  //     setUsers(data);
+  //   } catch (error) {
+  //     Alert.alert("Error", "Failed to load users: " + error.message);
+  //   } finally {
+  //     setLoading(false);
+  //     setRefreshing(false);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   loadUsers();
+  // }, []);
+
+  // const onRefresh = () => loadUsers(true);
 
   const onEditUser = (user) => {
     setSelectedUser(user);
@@ -50,31 +56,35 @@ export default function UsersScreen() {
 
   const onUserUpdated = () => {
     setModalVisible(false);
-    loadUsers();
+    // loadUsers();
     setSnackbarMsg("User updated successfully");
     setSnackbarVisible(true);
   };
-
-  return (
-    <View style={theme.container}>
-      {loading && !refreshing ? (
+  if (loading) {
+    return (
+      <View style={theme.container}>
         <View style={styles.centered}>
           <ActivityIndicator size="large" color={Colors.primary} />
           <Text>Loading users...</Text>
         </View>
-      ) : (
+      </View>
+    );
+  }
+  return (
+    <View style={theme.container}>
+      <>
         <ScrollView
           style={styles.scroll}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
+          // refreshControl={
+          //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          // }
         >
-          <View style={styles.header}>
+          {/* <View style={styles.header}>
             <Text variant="headlineLarge">Users</Text>
             <Text variant="bodyMedium">{users.length} total users</Text>
-          </View>
+          </View> */}
           <UserTable
-            users={users}
+            users={currentUsers}
             onEditUser={onEditUser}
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
@@ -83,7 +93,12 @@ export default function UsersScreen() {
             loading={loading}
           />
         </ScrollView>
-      )}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
+      </>
 
       <FAB
         icon="plus"

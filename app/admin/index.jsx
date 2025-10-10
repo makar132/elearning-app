@@ -130,7 +130,7 @@ export default function AdminDashboard() {
                 {stats.popularCourses.slice(0, 3).map((course) => (
                   <View key={course.id} style={styles.popularItem}>
                     <View style={styles.courseInfo}>
-                      <Text variant="titleMedium">{course.title}</Text>
+                      <Text variant="titleMedium" style={styles.courseTitle}>{course.title}</Text>
                       <Text variant="bodySmall" style={styles.courseInstructor}>
                         by {course.instructor}
                       </Text>
@@ -190,16 +190,27 @@ const styles = StyleSheet.create({
   statsSection: { padding: 16 },
   sectionTitle: { marginBottom: 12, color: "#333" },
   statsRow: { flexDirection: "row", marginBottom: 8 },
-  card: { marginHorizontal: 16, marginVertical: 4 },
+  card: {
+    marginHorizontal: 16,
+    marginVertical: 4,
+    backgroundColor: "#fff",
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+  },
   popularItem: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingVertical: 8,
+    margin: 8,
     borderBottomWidth: 1,
-    borderBottomColor: "#eee",
+    borderBottomColor: "#333",
   },
   courseInfo: { flex: 1 },
+  courseTitle: { color: "#333" },
   courseInstructor: { color: "#666", marginTop: 2 },
   section: { marginBottom: 16, paddingHorizontal: 16 },
   actions: { flexDirection: "row", justifyContent: "space-around" },

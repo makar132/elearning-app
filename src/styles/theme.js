@@ -15,6 +15,12 @@ export const Typography = {
     subheading: { fontSize: 16, fontWeight: '400' },
     body: { fontSize: 14, fontWeight: '400' },
 };
+export const Spacing = {
+    sm: 8,
+    md: 16,
+    lg: 24,
+    xl: 32,
+};
 
 export default StyleSheet.create({
     container: {

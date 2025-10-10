@@ -1,14 +1,14 @@
 import React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import {
-    Button,
-    Card,
-    Chip,
-    DataTable,
-    IconButton,
-    Menu,
-    Searchbar,
-    Text,
+  Button,
+  Card,
+  Chip,
+  DataTable,
+  IconButton,
+  Menu,
+  Searchbar,
+  Text,
 } from "react-native-paper";
 import { getRoleDisplayName } from "../../utils/permissions";
 
@@ -24,6 +24,7 @@ export default function UserTable({
   const [menuVisible, setMenuVisible] = React.useState(false);
 
   const filteredUsers = users.filter((user) => {
+    console.log("checking user: ", user);
     const matchesSearch =
       user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.email.toLowerCase().includes(searchQuery.toLowerCase());
@@ -34,8 +35,8 @@ export default function UserTable({
   const getRoleColor = (role) => (role === "admin" ? "#D32F2F" : "#4CAF50");
 
   return (
-    <Card style={styles.card}>
-      <Card.Content style={styles.cardContent}>
+    <Card style={[styles.card , {flex:1}]}>
+      <Card.Content style={[styles.cardContent, { flex: 1 }]}>
         <View style={styles.header}>
           <Text variant="titleLarge" style={styles.headerTitle}>
             User Management
@@ -97,7 +98,12 @@ export default function UserTable({
           </Menu>
         </View>
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ flexGrow: 1, width: "100%" }}
+          style={{flex:1}}
+        >
           <DataTable style={styles.table}>
             <DataTable.Header style={styles.tableHeader}>
               <DataTable.Title
@@ -251,7 +257,7 @@ const styles = StyleSheet.create({
     borderColor: "#E0E0E0",
   },
   table: {
-    minWidth: 700,
+    minWidth: "100%",
     backgroundColor: "#FFFFFF",
   },
   tableHeader: {
@@ -261,10 +267,10 @@ const styles = StyleSheet.create({
     color: "#333333",
     fontWeight: "600",
   },
-  nameColumn: { flex: 2, minWidth: 200 },
-  roleColumn: { flex: 1, minWidth: 100 },
-  statsColumn: { flex: 0.5, minWidth: 80 },
-  actionColumn: { flex: 0.5, minWidth: 60 },
+  nameColumn: { flex: 2 },
+  roleColumn: { flex: 1 },
+  statsColumn: { flex: 0.5 },
+  actionColumn: { flex: 0.5 },
   row: {
     borderBottomWidth: 1,
     borderBottomColor: "#F0F0F0",

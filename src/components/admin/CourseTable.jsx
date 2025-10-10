@@ -25,6 +25,7 @@ export default function CourseTable({
   const categories = [...new Set(courses.map((c) => c.category))];
 
   const filtered = courses.filter((course) => {
+    console.log("checking course: ", course);
     const matchesSearch =
       course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       course.instructor.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -73,6 +74,7 @@ export default function CourseTable({
                 icon="filter"
                 disabled={loading}
                 style={styles.filterButton}
+                textColor="#746AEB"
               >
                 {categoryFilter === "all" ? "All Categories" : categoryFilter}
               </Button>
@@ -98,7 +100,11 @@ export default function CourseTable({
           </Menu>
         </View>
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ flexGrow: 1 }}
+        >
           <DataTable style={styles.table}>
             <DataTable.Header style={styles.tableHeader}>
               <DataTable.Title
@@ -179,7 +185,12 @@ export default function CourseTable({
                   </View>
                 </DataTable.Cell>
                 <DataTable.Cell style={styles.categoryCol}>
-                  <Chip compact mode="outlined" style={styles.categoryChip}>
+                  <Chip
+                    compact
+                    mode="flat"
+                    style={styles.categoryChip}
+                    textStyle={styles.categoryText}
+                  >
                     {course.category}
                   </Chip>
                 </DataTable.Cell>
@@ -281,7 +292,7 @@ const styles = StyleSheet.create({
     borderColor: "#E0E0E0",
   },
   table: {
-    minWidth: 900,
+    minWidth: '100%',
     backgroundColor: "#FFFFFF",
   },
   tableHeader: {
@@ -301,7 +312,13 @@ const styles = StyleSheet.create({
   titleCol: { flex: 2, minWidth: 200 },
   categoryCol: { flex: 1, minWidth: 120 },
   priceCol: { flex: 0.5, minWidth: 80 },
-  statCol: { flex: 0.5, minWidth: 80 },
+  statCol: {
+    flex: 0.5,
+    minWidth: 80,
+    marginRight: 16,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   dateCol: { flex: 1, minWidth: 100 },
   actionCol: { flex: 1, minWidth: 100 },
   courseImage: {
@@ -329,6 +346,9 @@ const styles = StyleSheet.create({
   categoryChip: {
     backgroundColor: "#F9FAFB",
     borderColor: "#E0E0E0",
+  },
+  categoryText: {
+    color: "#333333",
   },
   priceText: {
     color: "#333333",

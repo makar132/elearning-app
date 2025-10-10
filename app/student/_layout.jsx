@@ -2,10 +2,9 @@ import { router, Stack } from "expo-router";
 import { StyleSheet, View } from "react-native";
 import { Button } from "react-native-paper";
 import BottomNav from "../../src/components/BottomNavigation/BottomNavigation";
-import { useAuth } from "../../src/context/AuthContext";
+import { logout } from "../../src/services/authService";
 
 export default function StudentLayout({ children }) {
-  const { logout } = useAuth();
 
   return (
     <View style={styles.container}>
@@ -16,7 +15,7 @@ export default function StudentLayout({ children }) {
     mode="text"
     onPress={async () => {
       await logout();
-      router.replace('/auth/login');
+      router.replace('/auth');
     }}
     
     style={{ marginRight: 10, padding: 10 }}

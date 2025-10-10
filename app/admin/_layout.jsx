@@ -43,7 +43,7 @@ export default function AdminLayout() {
             mode="text"
             onPress={async () => {
               await logout();
-              router.replace("auth/login");
+              router.replace("auth");
             }}
             labelStyle={{ color: "#fff", ...Typography.body }}
             style={{ marginRight: 16 }}

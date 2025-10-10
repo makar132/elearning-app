@@ -1,50 +1,56 @@
-import { signOut as firebaseSignOut, onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
 import { createContext, useContext, useEffect, useState } from "react";
-import { auth, db } from "../services/firebaseConfig";
+import { onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import { auth, db } from "../services/firebaseConfig.js";
+import { login as loginService, register as registerService, logout as logoutService } from "../services/authService.js";
 
 export const AuthContext = createContext({});
 export const useAuth = () => useContext(AuthContext);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [role, setRole] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
 
+  // keep auth state in sync with Firebase (login / logout / session)
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      console.log("Auth state changed:", firebaseUser);
       setIsLoading(true);
 
       if (firebaseUser) {
         try {
-          const snapshot = await getDoc(doc(db, "users", firebaseUser.uid));
+          const docRef = doc(db, "users", firebaseUser.uid);
+          const snapshot = await getDoc(docRef);
+
           if (snapshot.exists()) {
             const data = snapshot.data();
             const userData = {
               id: firebaseUser.uid,
-              name: data.name || data.fullName || "",
-              email: data.email || firebaseUser.email || "",
+              name: data.name || "",
+              email: data.email || firebaseUser.email,
               role: data.role || "student",
               joinedCourses: data.joinedCourses || [],
               favorites: data.favorites || [],
               wishlist: data.wishlist || [],
             };
             setUser(userData);
-            setRole(userData.role);
           } else {
-            setUser(null);
-            setRole(null);
+            // if not user
+            setUser({
+              id: firebaseUser.uid,
+              name: firebaseUser.displayName || "",
+              email: firebaseUser.email || "",
+              role: "student",
+              joinedCourses: [],
+              favorites: [],
+              wishlist: [],
+            });
           }
-        } catch (err) {
-          console.error("Error loading user profile:", err);
+        } catch (error) {
+          console.error("Error fetching user data:", error);
           setUser(null);
-          setRole(null);
         }
       } else {
         setUser(null);
-        setRole(null);
       }
 
       setIsLoading(false);
@@ -53,45 +59,34 @@ export function AuthProvider({ children }) {
     return unsubscribe;
   }, []);
 
-  const loginUser = (firebaseUser) => {
-    // Called after register or login to set local state immediately
-    console.log("Login user:", firebaseUser);
-    // const userData = {
-    //   id: firebaseUser.uid,
-    //   name: firebaseUser.displayName || "",
-    //   email: firebaseUser.email || "",
-    //   role: firebaseUser.role || "student",
-    //   joinedCourses:firebaseUser.joinedCourses || [],
-    //   favorites: firebaseUser.favorites || [],
-    //   wishlist: firebaseUser.wishlist || [],
-    // };
-    // setUser(userData);
-    // setRole(userData.role);
-    // setIsLoading(false);
+  // wrappers that call the authService and update local state on success
+  const login = async (email, password) => {
+    const result = await loginService(email, password);
+    if (result.success) setUser(result.user);
+    return result;
+  };
+
+  const register = async (userData) => {
+    const result = await registerService(userData);
+    if (result.success) setUser(result.user);
+    return result;
   };
 
   const logout = async () => {
-    try {
-      await firebaseSignOut(auth);
-    } catch (e) {
-      console.error("Logout error:", e);
-    }
-    // setUser(null);
-    // setRole(null);
+    const result = await logoutService();
+    if (result.success) setUser(null);
+    return result;
   };
-
-  const completeOnboarding = () => setHasCompletedOnboarding(true);
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        role,
         isLoading,
-        hasCompletedOnboarding,
-        completeOnboarding,
-        loginUser,
+        login,
+        register,
         logout,
+        isAuthenticated: !!user,
       }}
     >
       {children}

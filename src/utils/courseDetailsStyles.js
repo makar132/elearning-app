@@ -8,7 +8,7 @@ export const courseDetailsStyles = StyleSheet.create({
   },
   headerContainer: {
     position: 'relative',
-    height: 250,
+    height: 280,
   },
   headerImage: {
     width: '100%',
@@ -19,13 +19,13 @@ export const courseDetailsStyles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     height: '100%',
-    backgroundColor: 'rgba(30, 58, 138, 0.5)',
+    backgroundColor: 'rgba(30, 58, 138, 0.4)',
   },
   backButton: {
     position: 'absolute',
     top: 40,
     left: 20,
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    backgroundColor: 'rgba(0,0,0,0.5)',
     padding: 10,
     borderRadius: 25,
     width: 44,
@@ -37,7 +37,7 @@ export const courseDetailsStyles = StyleSheet.create({
     position: 'absolute',
     top: 40,
     right: 20,
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    backgroundColor: 'rgba(0,0,0,0.5)',
     padding: 10,
     borderRadius: 25,
     width: 44,
@@ -47,8 +47,9 @@ export const courseDetailsStyles = StyleSheet.create({
   },
   playButtonContainer: {
     position: 'absolute',
-    top: '40%',
-    left: '45%',
+    top: '35%',
+    left: '50%',
+    marginLeft: -32,
   },
   playButton: {
     backgroundColor: '#fff',
@@ -69,119 +70,287 @@ export const courseDetailsStyles = StyleSheet.create({
     bottom: 0,
     flexDirection: 'row',
     width: '100%',
-    justifyContent: 'space-around',
-    paddingVertical: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    backgroundColor: 'rgba(255, 255, 255, 0.98)',
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
   },
   tab: {
-    paddingVertical: 10,
-    paddingHorizontal: 24,
-    borderRadius: 0,
+    flex: 1,
+    paddingVertical: 14,
+    alignItems: 'center',
     borderBottomWidth: 3,
     borderBottomColor: 'transparent',
   },
   activeTab: {
-    backgroundColor: 'transparent',
     borderBottomColor: '#1E3A8A',
   },
   tabText: {
     color: '#6B7280',
     fontWeight: '600',
-    fontSize: 16,
+    fontSize: 15,
   },
   activeTabText: {
     color: '#1E3A8A',
     fontWeight: '700',
   },
   contentContainer: {
-    padding: 20,
     backgroundColor: '#fff',
   },
   titleContainer: {
-    marginBottom: 20,
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
   },
-  titleSection: {
+  titleRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     marginBottom: 12,
   },
   title: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: '700',
-    color: '#1a1a2e',
+    color: '#1F2937',
     flex: 1,
+    marginRight: 12,
   },
   priceContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
     backgroundColor: '#F0F9FF',
     paddingHorizontal: 16,
     paddingVertical: 8,
-    borderRadius: 20,
+    borderRadius: 8,
     borderWidth: 1,
     borderColor: '#BFDBFE',
   },
   priceText: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: '700',
     color: '#1E3A8A',
-    marginLeft: 6,
   },
-  categoryContainer: {
+  instructorRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#EEF2FF',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-    alignSelf: 'flex-start',
     marginBottom: 8,
   },
-  categoryText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#4F46E5',
+  instructorText: {
+    fontSize: 14,
+    color: '#6B7280',
     marginLeft: 6,
   },
-  instructorContainer: {
+  ratingRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
   },
-  instructorName: {
-    fontSize: 16,
-    color: '#1a1a2e',
-    fontWeight: '600',
-    marginLeft: 8,
-  },
-  ratingContainer: {
+  ratingStars: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 4,
+    marginRight: 6,
+  },
+
+  enrollButtonContainer: {
+
+  position: 'absolute',
+  bottom:120, 
+  left: 16,
+  right: 16,
+  backgroundColor: '#fff', 
+  paddingHorizontal: 20, 
+  paddingVertical: 16,
+  borderTopWidth: 1, 
+  borderTopColor: '#E5E7EB', 
+  borderRadius: 16,
+  elevation: 8, 
+  shadowColor: '#000', 
+  shadowOffset: { width: 0, height: -2 }, 
+  shadowOpacity: 0.1, 
+  shadowRadius: 8,
+  zIndex: 50,
+
   },
   enrollButton: {
-    marginTop: 24,
+    flexDirection: 'row',
     backgroundColor: '#1E3A8A',
     paddingVertical: 16,
-    borderRadius: 8,
+    borderRadius: 12,
     alignItems: 'center',
+    justifyContent: 'center',
     shadowColor: '#1E3A8A',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+    elevation: 6,
+  },
+  enrollButtonDisabled: {
+    backgroundColor: '#9CA3AF',
+    shadowColor: '#9CA3AF',
   },
   enrollButtonText: {
     color: '#fff',
     fontWeight: '700',
     fontSize: 16,
-    textTransform: 'uppercase',
     letterSpacing: 0.5,
+  },
+  // ✅ Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 24,
+    width: '85%',
+    alignItems: 'center',
+  },
+  modalIconContainer: {
+    marginBottom: 16,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#1F2937',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  modalMessage: {
+    fontSize: 15,
+    color: '#6B7280',
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    gap: 12,
+    width: '100%',
+  },
+  modalButtonCancel: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    backgroundColor: '#F3F4F6',
+  },
+  modalButtonCancelText: {
+    color: '#6B7280',
+    fontWeight: '600',
+    fontSize: 15,
+  },
+  modalButtonConfirm: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    backgroundColor: '#1E40AF',
+  },
+  modalButtonConfirmText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 15,
   },
 });
 
-// ==== Instructor Tab ====
+// ==== Overview Tab Styles ====
+export const overviewTabStyles = StyleSheet.create({
+  container: {
+    padding: 20,
+    backgroundColor: '#fff',
+  },
+  description: {
+    fontSize: 14,
+    color: '#4B5563',
+    lineHeight: 22,
+    marginBottom: 8,
+  },
+  readMoreText: {
+    fontSize: 14,
+    color: '#1E40AF',
+    fontWeight: '600',
+    marginBottom: 20,
+  },
+  infoGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginBottom: 24,
+  },
+  infoCard: {
+    width: (width - 60) / 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F9FAFB',
+    padding: 14,
+    borderRadius: 12,
+    marginBottom: 12,
+  },
+  infoIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  infoTextContainer: {
+    flex: 1,
+  },
+  infoValue: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1F2937',
+    marginBottom: 2,
+  },
+  infoLabel: {
+    fontSize: 12,
+    color: '#6B7280',
+    fontWeight: '500',
+  },
+  skillsSection: {
+    marginBottom: 24,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#1F2937',
+    marginBottom: 12,
+  },
+  skillsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  skillTag: {
+    backgroundColor: '#EEF2FF',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#C7D2FE',
+  },
+  skillText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#4F46E5',
+  },
+  additionalInfo: {
+    borderTopWidth: 1,
+    borderTopColor: '#F3F4F6',
+    paddingTop: 16,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  infoText: {
+    fontSize: 14,
+    color: '#6B7280',
+    marginLeft: 8,
+  },
+});
+
+// ==== Instructor Tab Styles ====
 export const instructorTabStyles = StyleSheet.create({
   container: {
     padding: 20,
@@ -195,7 +364,7 @@ export const instructorTabStyles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#1E40AF', // لون خلفية للوجو الافتراضي
+    backgroundColor: '#1E40AF',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -204,70 +373,186 @@ export const instructorTabStyles = StyleSheet.create({
     fontSize: 32,
     fontWeight: '700',
   },
+  infoContainer: {
+    flex: 1,
+    marginLeft: 16,
+  },
   name: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '700',
-    color: '#1a1a2e',
+    color: '#1F2937',
     marginBottom: 4,
   },
   bioText: {
-    fontSize: 14,
+    fontSize: 13,
     color: '#6B7280',
-    lineHeight: 20,
-    marginTop: 2,
+    lineHeight: 18,
+    marginTop: 4,
+  },
+  emailContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8,
+    backgroundColor: '#F0F9FF',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    alignSelf: 'flex-start',
   },
   emailText: {
-    fontSize: 14,
+    fontSize: 13,
     color: '#1E40AF',
     fontWeight: '600',
-    textDecorationLine: 'underline',
-    marginTop: 6,
+    marginLeft: 6,
   },
 });
 
-// ==== Overview Tab ====
-export const overviewTabStyles = StyleSheet.create({
+// ==== Reviews Tab Styles ====
+export const reviewsTabStyles = StyleSheet.create({
   container: {
     padding: 20,
     backgroundColor: '#fff',
   },
-  title: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#1a1a2e',
-    marginBottom: 8,
+  loadingContainer: {
+    padding: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  description: {
-    fontSize: 14,
-    color: '#6B7280',
-    lineHeight: 22,
-    marginBottom: 12,
-  },
-  infoRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 12,
-  },
-  infoCard: {
+  addReviewButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F3F4F6',
-    padding: 10,
+    justifyContent: 'center',
+    backgroundColor: '#1E3A8A',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
     borderRadius: 10,
-    minWidth: (width - 60) / 2,
+    marginBottom: 20,
   },
-  infoText: {
-    marginLeft: 6,
+  addReviewButtonText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '600',
+    marginLeft: 8,
+  },
+  reviewForm: {
+    backgroundColor: '#F9FAFB',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  formHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  formTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1F2937',
+  },
+  ratingSection: {
+    marginBottom: 16,
+  },
+  ratingLabel: {
     fontSize: 14,
+    fontWeight: '600',
     color: '#374151',
+    marginBottom: 8,
+  },
+  starsContainer: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  commentInput: {
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 14,
+    color: '#1F2937',
+    minHeight: 100,
+    textAlignVertical: 'top',
+  },
+  characterCount: {
+    fontSize: 12,
+    color: '#9CA3AF',
+    textAlign: 'right',
+    marginTop: 4,
+    marginBottom: 12,
+  },
+  submitButton: {
+    backgroundColor: '#1E3A8A',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  submitButtonDisabled: {
+    backgroundColor: '#9CA3AF',
+  },
+  submitButtonText: {
+    color: '#fff',
+    fontSize: 15,
     fontWeight: '600',
   },
-  sectionContainer: {
-    marginTop: 16,
+  emptyState: {
+    alignItems: 'center',
+    paddingVertical: 40,
   },
-  dateText: {
-    fontSize: 14,
+  emptyStateText: {
+    fontSize: 16,
+    fontWeight: '600',
     color: '#6B7280',
+    marginTop: 12,
+  },
+  emptyStateSubtext: {
+    fontSize: 14,
+    color: '#9CA3AF',
     marginTop: 4,
+  },
+  reviewCard: {
+    backgroundColor: '#F9FAFB',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  reviewHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  userImage: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    marginRight: 12,
+  },
+  reviewHeaderText: {
+    flex: 1,
+  },
+  userName: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#1F2937',
+    marginBottom: 2,
+  },
+  userRole: {
+    fontSize: 12,
+    color: '#6B7280',
+  },
+  reviewComment: {
+    fontSize: 14,
+    color: '#4B5563',
+    lineHeight: 20,
+    marginBottom: 8,
+  },
+  reviewDate: {
+    fontSize: 12,
+    color: '#9CA3AF',
   },
 });

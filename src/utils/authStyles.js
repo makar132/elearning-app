@@ -1,13 +1,17 @@
-import { StyleSheet } from 'react-native';
+// src/utils/authStyles.js
+import { StyleSheet, Dimensions } from 'react-native';
+
+const { width, height } = Dimensions.get('window');
 
 export const authColors = {
-  primary: '#6366F1', // Indigo color
-  secondary: '#1F2937', // Dark gray
-  text: '#374151',
-  textLight: '#6B7280',
+  primary: '#1B3B6F',   
+  secondary: '#1E3A8A', 
+  text: '#1F2937',
+  textLight: '#64748B',
   background: '#FFFFFF',
   border: '#E2E8F0',
-  link: '#6366F1',
+  error: '#EF4444',
+  link: '#1B3B6F',
 };
 
 export const authStyles = StyleSheet.create({
@@ -15,81 +19,101 @@ export const authStyles = StyleSheet.create({
     flex: 1,
     backgroundColor: authColors.background,
     paddingHorizontal: 24,
-    paddingTop: 20,
+    paddingTop: 80,
   },
   backButton: {
-    marginLeft: -12,
-    marginBottom: 20,
+   
+    top: 0,
+    left:5,
+    zIndex: 10,
   },
   header: {
-    marginBottom: 32,
+    alignItems: 'center',
+    marginBottom: 40,
   },
   title: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: 'bold',
-    color: authColors.secondary,
+    color: authColors.primary,
     marginBottom: 8,
   },
   subtitle: {
-    fontSize: 16,
-    color: authColors.textLight,
-    lineHeight: 24,
-  },
-  inputContainer: {
-    marginBottom: 20,
-  },
-  label: {
     fontSize: 14,
-    fontWeight: '600',
-    color: authColors.text,
-    marginBottom: 8,
+    color: authColors.textLight,
+    textAlign: 'center',
   },
   input: {
-    backgroundColor: authColors.background,
-    fontSize: 14,
-  },
-  radioContainer: {
-    flexDirection: 'row',
-    gap: 16,
-    marginTop: 8,
-  },
-  radioOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  radioLabel: {
-    fontSize: 14,
+    marginBottom: 20,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: authColors.border,
+    backgroundColor: '#F9FAFB',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    height: 45,
     color: authColors.text,
-    marginLeft: 8,
+  },
+  errorText: {
+    fontSize: 12,
+    color: authColors.error,
+    marginTop: -8,
+    marginBottom: 8,
   },
   button: {
-    backgroundColor: authColors.primary,
+    width: '100%',
     borderRadius: 8,
+    backgroundColor: '#1B3B6F', 
     marginTop: 8,
-    marginBottom: 24,
+    marginBottom: 20,
   },
   buttonContent: {
-    paddingVertical: 8,
+    paddingVertical: 10,
   },
   buttonLabel: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    letterSpacing: 1,
+    fontSize: 15,
+    fontWeight: '600',
+    letterSpacing: 0.5,
+    color: '#FFFFFF',
+  },
+  signInButton: {
+    width: '100%',
+    borderRadius: 8,
+    backgroundColor: '#1B3B6F',
+    marginBottom: 12,
+  },
+  signUpButton: {
+    width: '100%',
+    borderColor: '#1B3B6F',
+    borderWidth: 2,
+    borderRadius: 8,
+    backgroundColor: 'transparent',
+  },
+  buttonText: {
+    fontSize: 15,
+    fontWeight: '600',
+    letterSpacing: 0.5,
+  },
+  signUpButtonText: {
+    color: '#1B3B6F',
+    fontSize: 15,
+    fontWeight: '600',
+    letterSpacing: 0.5,
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 4,
+    marginTop: 10,
+    marginBottom: 30,
   },
   footerText: {
     fontSize: 14,
     color: authColors.textLight,
+    marginRight: 6,
   },
   footerLink: {
     fontSize: 14,
-    color: authColors.link,
+    color: authColors.primary,
     fontWeight: '600',
   },
 });

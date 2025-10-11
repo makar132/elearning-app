@@ -1,9 +1,10 @@
+// app/student/my-courses.jsx
 import { Ionicons } from "@expo/vector-icons";
-import { router } from 'expo-router';
 import { useEffect, useState } from "react";
 import { ScrollView, TextInput, TouchableOpacity, View } from "react-native";
 import { Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { router } from 'expo-router';
 
 import CourseCard from "../../src/components/CourseCard/CourseCard";
 import { courseService } from "../../src/services/courseService";
@@ -89,6 +90,7 @@ export default function MyCourses() {
               key={course.id}
               course={course}
               onPressDetail={(id) =>
+                // ✅ الصح
                 router.push({ pathname: '/student/course-details', params: { id } })
               }
               onPressEnroll={(id) => console.log("Enroll", id)}

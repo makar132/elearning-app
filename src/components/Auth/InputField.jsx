@@ -1,7 +1,6 @@
-import React from 'react';
 import { Text, View } from 'react-native';
 import { TextInput } from 'react-native-paper';
-import { authStyles, authColors } from '../../utils/authStyles.js';
+import { authColors, authStyles } from '../../utils/authStyles.js';
 
 const InputField = ({
   label,

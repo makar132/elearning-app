@@ -74,6 +74,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   header: { fontWeight: "bold", fontSize: 18 },
-  clearBtn: { backgroundColor: "#d40f08ff", padding: 4, borderRadius: 6 },
+  clearBtn: { backgroundColor: "#4869c2ff", padding: 4, borderRadius: 6 },
   typing: { textAlign: "center", color: "#999", marginVertical: 5 },
 });

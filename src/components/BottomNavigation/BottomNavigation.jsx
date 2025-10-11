@@ -1,96 +1,78 @@
-
 import { Ionicons } from '@expo/vector-icons';
-import { usePathname, useRouter } from 'expo-router';
-import { useState } from 'react';
-import { Animated, Pressable, View } from 'react-native';
-import { useAuth } from '../../context/AuthContext';
-import { useCart } from '../../context/CartContext';
-import styles from '../../utils/BottomNav.styles';
-import ProfileSidebar from './ProfileSidebar';
+import { router } from 'expo-router';
+import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 
-const { width } = require('react-native').Dimensions.get('window');
-const SIDEBAR_WIDTH = width * 0.75;
-
-const NAV_ITEMS = [
-  { key: 'home', icon: 'home', route: '/student/dashboard', pathPattern: '/dashboard' },
-  { key: 'courses', icon: 'book', route: '/student/my-courses', pathPattern: '/my-courses' },
-  { key: 'chat', icon: 'chatbubble-ellipses', route: '/aiChat', pathPattern: '/aiChat' },
-  { key: 'favorites', icon: 'heart', route: '/student/favorites', pathPattern: '/favorites' },
-  { key: 'profile', icon: 'person', action: 'sidebar' },
-];
-
-export default function BottomNav() {
-  const router = useRouter();
-  const pathname = usePathname();
-  const { logout } = useAuth();
-  const { checkoutCount } = useCart();
-
-  const [sidebarVisible, setSidebarVisible] = useState(false);
-  const slideAnim = new Animated.Value(SIDEBAR_WIDTH);
-
-  const toggleSidebar = () => {
-    setSidebarVisible(!sidebarVisible);
-    Animated.timing(slideAnim, {
-      toValue: sidebarVisible ? SIDEBAR_WIDTH : 0,
-      duration: 300,
-      useNativeDriver: false,
-    }).start();
-  };
-
-  const handleLogout = async () => {
-    toggleSidebar();
-    await new Promise(r => setTimeout(r, 300));
-    await logout();
-    router.replace('/auth/login');
-  };
-
-  const handleNavPress = (item) => {
-    if (item.action === 'sidebar') toggleSidebar();
-    else if (item.route) router.push(item.route);
-  };
-
-  const activeTab = NAV_ITEMS.find(item => item.pathPattern && pathname.startsWith(item.pathPattern))?.key 
-|| (sidebarVisible ? 'profile' : '');
-
+export default function BottomNav({ active }) {
   return (
-    <>
-      <ProfileSidebar
-        visible={sidebarVisible}
-        slideAnim={slideAnim}
-        toggleSidebar={toggleSidebar}
-        handleLogout={handleLogout}
-        menuItems={[{
-          icon: 'briefcase',
-          title: 'My Courses',
-          onPress: () => { toggleSidebar(); setTimeout(() => router.push('/student/my-courses'), 300); },
-        }]}
-        checkoutCount={checkoutCount}
-      />
+    <View style={styles.bottomNavContainer}>
+      <View style={styles.bottomNav}>
+        <TouchableOpacity
+          onPress={() => router.push('/student/dashboard')}
+          style={styles.navItem}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="home" size={24} color={active === 'home' ? '#FFFFFF' : '#93A5C5'} />
+        </TouchableOpacity>
 
-      <View style={styles.bottomNavContainer}>
-        <View style={styles.bottomNav}>
-          {NAV_ITEMS.map(item => {
-            const isActive = activeTab === item.key;
-            const iconName = item.key === 'chat'
-              ? isActive ? 'chatbubble-ellipses' : 'chatbubble-ellipses-outline'
-              : isActive ? item.icon : `${item.icon}-outline`;
+        <TouchableOpacity
+          onPress={() => router.push('/student/my-courses')}
+          style={styles.navItem}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="book" size={24} color={active === 'courses' ? '#FFFFFF' : '#93A5C5'} />
+        </TouchableOpacity>
 
-            return (
-              <Pressable
-                key={item.key}
-                onPress={() => handleNavPress(item)}
-                style={[styles.navItem, isActive && styles.navItemActive]}
-                android_ripple={{ color: 'rgba(255,255,255,0.2)', borderless: true, radius: 28 }}
-              >
-                <View style={[styles.iconContainer, isActive && styles.iconContainerActive]}>
-                  <Ionicons name={iconName} size={24} color={isActive ? '#1E40AF' : '#E0E7FF'} />
-                </View>
-                {isActive && <View style={styles.activeIndicator} />}
-              </Pressable>
-            );
-          })}
-        </View>
+        <TouchableOpacity
+          onPress={() => router.push('/student/favorites')}
+          style={styles.navItem}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="heart" size={24} color={active === 'favorites' ? '#FFFFFF' : '#93A5C5'} />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => router.push('/aiChat')}
+          style={styles.navItem}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="chatbubble" size={24} color={active === 'aiChat' ? '#FFFFFF' : '#93A5C5'} />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => router.push('/student/profile')}
+          style={styles.navItem}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="person" size={24} color={active === 'profile' ? '#FFFFFF' : '#93A5C5'} />
+        </TouchableOpacity>
       </View>
-    </>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  bottomNavContainer: {
+    paddingHorizontal: 20,
+    paddingBottom: Platform.OS === 'ios' ? 20 : 10,
+    backgroundColor: 'transparent',
+  },
+  bottomNav: {
+    flexDirection: 'row',
+    backgroundColor: '#1E40AF', // اللون الأصلي
+    borderRadius: 20, // أقل من قبل، مش مستدير قوي
+    paddingVertical: 10, // أصغر شوي
+    paddingHorizontal: 10,
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  navItem: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 6,
+  },
+});

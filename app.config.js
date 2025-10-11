@@ -46,6 +46,9 @@ export default {
       "typedRoutes": true,
       "reactCompiler": true
     },
-    
+    extra: {
+      CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
+      CLOUDINARY_UPLOAD_PRESET: process.env.CLOUDINARY_UPLOAD_PRESET
+    }
   }
 }

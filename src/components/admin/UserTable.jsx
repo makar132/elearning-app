@@ -35,7 +35,7 @@ export default function UserTable({
   const getRoleColor = (role) => (role === "admin" ? "#D32F2F" : "#4CAF50");
 
   return (
-    <Card style={[styles.card , {flex:1}]}>
+    <Card style={[styles.card, { flex: 1 }]}>
       <Card.Content style={[styles.cardContent, { flex: 1 }]}>
         <View style={styles.header}>
           <Text variant="titleLarge" style={styles.headerTitle}>
@@ -102,7 +102,7 @@ export default function UserTable({
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{ flexGrow: 1, width: "100%" }}
-          style={{flex:1}}
+          style={{ flex: 1 }}
         >
           <DataTable style={styles.table}>
             <DataTable.Header style={styles.tableHeader}>
@@ -174,17 +174,19 @@ export default function UserTable({
                 </DataTable.Cell>
                 <DataTable.Cell numeric style={styles.statsColumn}>
                   <Text style={styles.statsText}>
-                    {user.joinedCoursesCount || 0}
+                    {Array.isArray(user.joinedCourses)
+                      ? user.joinedCourses.length
+                      : 0}
                   </Text>
                 </DataTable.Cell>
                 <DataTable.Cell numeric style={styles.statsColumn}>
                   <Text style={styles.statsText}>
-                    {user.favoritesCount || 0}
+                    {Array.isArray(user.favorites) ? user.favorites.length : 0}
                   </Text>
                 </DataTable.Cell>
                 <DataTable.Cell numeric style={styles.statsColumn}>
                   <Text style={styles.statsText}>
-                    {user.wishlistCount || 0}
+                    {Array.isArray(user.wishlist) ? user.wishlist.length : 0}
                   </Text>
                 </DataTable.Cell>
                 <DataTable.Cell style={styles.actionColumn}>

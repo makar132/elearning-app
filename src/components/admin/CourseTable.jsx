@@ -22,16 +22,40 @@ export default function CourseTable({
   loading,
 }) {
   const [menuVisible, setMenuVisible] = React.useState(false);
-  const categories = [...new Set(courses.map((c) => c.category))];
+  const categories = [
+    ...new Set(courses.map((c) => c.category).filter(Boolean)),
+  ];
+
+  // const filtered = courses.filter((course) => {
+  //   console.log("checking course: ", course);
+  //   const matchesSearch =
+  //     course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //     course.instructor.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //     course.category.toLowerCase().includes(searchQuery.toLowerCase());
+  //   const matchesCategory =
+  //     categoryFilter === "all" || course.category === categoryFilter;
+  //   return matchesSearch && matchesCategory;
+  // });
 
   const filtered = courses.filter((course) => {
-    console.log("checking course: ", course);
+    const q = (searchQuery ?? "").trim().toLowerCase();
+    const titleL = (course.titleLower ?? course.title ?? "")
+      .toString()
+      .toLowerCase();
+    const categoryL = (course.categoryLower ?? course.category ?? "")
+      .toString()
+      .toLowerCase();
+    const instructorL = (course.instructor ?? "").toString().toLowerCase(); // no *_lower in DB
+
     const matchesSearch =
-      course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      course.instructor.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      course.category.toLowerCase().includes(searchQuery.toLowerCase());
+      q.length === 0 ||
+      titleL.includes(q) ||
+      categoryL.includes(q) ||
+      instructorL.includes(q);
+
     const matchesCategory =
       categoryFilter === "all" || course.category === categoryFilter;
+
     return matchesSearch && matchesCategory;
   });
 
@@ -292,7 +316,7 @@ const styles = StyleSheet.create({
     borderColor: "#E0E0E0",
   },
   table: {
-    minWidth: '100%',
+    minWidth: "100%",
     backgroundColor: "#FFFFFF",
   },
   tableHeader: {

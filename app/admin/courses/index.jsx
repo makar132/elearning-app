@@ -1,14 +1,9 @@
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import {
-  Alert,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  View,
-} from "react-native";
+import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
 import { ActivityIndicator, FAB, Snackbar, Text } from "react-native-paper";
 import CourseTable from "../../../src/components/admin/CourseTable";
+import ConfirmationModal from "../../../src/components/ConfirmationModal";
 import { adminService } from "../../../src/services/adminService";
 import theme, { Colors } from "../../../src/styles/theme";
 
@@ -20,6 +15,8 @@ export default function CoursesScreen() {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMsg, setSnackbarMsg] = useState("");
+  const [confirm, setConfirm] = useState({ open: false, course: null });
+  const [deleting, setDeleting] = useState(false);
 
   const loadCourses = async (isRefresh = false) => {
     try {
@@ -29,7 +26,8 @@ export default function CoursesScreen() {
       const data = await adminService.getAllCoursesWithStats();
       setCourses(data);
     } catch (error) {
-      Alert.alert("Error", `Failed to load courses: ${error.message}`);
+      setSnackbarMsg(`Failed to load courses: ${error.message}`);
+      setSnackbarVisible(true);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -47,30 +45,24 @@ export default function CoursesScreen() {
   };
 
   const onDeleteCourse = (course) => {
-    Alert.alert(
-      "Confirm Delete",
-      `Delete "${course.title}"? This cannot be undone.`,
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              setLoading(true);
-              await adminService.deleteCourse(course.id);
-              setSnackbarMsg("Course deleted successfully");
-              setSnackbarVisible(true);
-              loadCourses();
-            } catch (error) {
-              Alert.alert("Error", `Failed to delete course: ${error.message}`);
-            } finally {
-              setLoading(false);
-            }
-          },
-        },
-      ]
-    );
+    setConfirm({ open: true, course });
+  };
+
+  const confirmDelete = async () => {
+    if (!confirm.course) return;
+    try {
+      setDeleting(true);
+      await adminService.deleteCourse(confirm.course.id);
+      setSnackbarMsg("Course deleted successfully");
+      setSnackbarVisible(true);
+      await loadCourses();
+    } catch (error) {
+      setSnackbarMsg(`Failed to delete course: ${error.message}`);
+      setSnackbarVisible(true);
+    } finally {
+      setDeleting(false);
+      setConfirm({ open: false, course: null });
+    }
   };
 
   return (
@@ -114,6 +106,21 @@ export default function CoursesScreen() {
         label="New Course"
         onPress={() => router.push("/admin/courses/create-course")}
         style={[styles.fab, { backgroundColor: Colors.primary }]}
+      />
+
+      <ConfirmationModal
+        visible={confirm.open}
+        title="Delete course?"
+        message={
+          confirm.course
+            ? `Delete "${confirm.course.title}"? This cannot be undone.`
+            : "This action cannot be undone."
+        }
+        confirmText="Delete"
+        cancelText="Cancel"
+        loading={deleting}
+        onConfirm={confirmDelete}
+        onCancel={() => setConfirm({ open: false, course: null })}
       />
 
       <Snackbar

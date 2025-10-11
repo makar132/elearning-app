@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Alert, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import {
   Button,
   Card,
@@ -7,10 +7,12 @@ import {
   Modal,
   Portal,
   RadioButton,
+  Snackbar,
   Text,
   TextInput,
 } from "react-native-paper";
 import { adminService } from "../../services/adminService";
+import ConfirmationModal from "../ConfirmationModal";
 
 export default function EditUserModal({
   visible,
@@ -24,6 +26,9 @@ export default function EditUserModal({
     role: "student",
   });
   const [loading, setLoading] = useState(false);
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarMsg, setSnackbarMsg] = useState("");
+  const [confirm, setConfirm] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -37,7 +42,8 @@ export default function EditUserModal({
 
   const handleSave = async () => {
     if (!editedUser.name.trim() || !editedUser.email.trim()) {
-      Alert.alert("Error", "Name and email are required");
+      setSnackbarMsg("Name and email are required");
+      setSnackbarVisible(true);
       return;
     }
     setLoading(true);
@@ -47,41 +53,34 @@ export default function EditUserModal({
         email: editedUser.email.trim().toLowerCase(),
         role: editedUser.role,
       });
-      Alert.alert("Success", "User updated successfully");
+      setSnackbarMsg("User updated successfully");
+      setSnackbarVisible(true);
       onUserUpdated();
       onDismiss();
     } catch (error) {
-      Alert.alert("Error", "Failed to update user: " + error.message);
+      setSnackbarMsg(`Failed to update user: ${error.message}`);
+      setSnackbarVisible(true);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDelete = () => {
-    Alert.alert(
-      "Delete User",
-      `Are you sure you want to delete ${user?.name}? This action cannot be undone.`,
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: async () => {
-            setLoading(true);
-            try {
-              await adminService.deleteUser(user.id);
-              Alert.alert("Success", "User deleted successfully");
-              onUserUpdated();
-              onDismiss();
-            } catch (error) {
-              Alert.alert("Error", "Failed to delete user: " + error.message);
-            } finally {
-              setLoading(false);
-            }
-          },
-        },
-      ]
-    );
+  const handleDelete = () => setConfirm(true);
+  const confirmDelete = async () => {
+    setLoading(true);
+    try {
+      await adminService.deleteUser(user.id);
+      setSnackbarMsg("User deleted successfully");
+      setSnackbarVisible(true);
+      onUserUpdated();
+      onDismiss();
+    } catch (error) {
+      setSnackbarMsg(`Failed to delete user: ${error.message}`);
+      setSnackbarVisible(true);
+    } finally {
+      setLoading(false);
+      setConfirm(false);
+    }
   };
 
   if (!user) return null;
@@ -216,6 +215,22 @@ export default function EditUserModal({
           </Card.Actions>
         </Card>
       </Modal>
+      <ConfirmationModal
+        visible={confirm}
+        title="Delete user?"
+        message={`Delete "${user?.name}"? This cannot be undone.`}
+        confirmText="Delete"
+        onConfirm={confirmDelete}
+        onCancel={() => setConfirm(false)}
+        loading={loading}
+      />
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        duration={3000}
+      >
+        {snackbarMsg}
+      </Snackbar>
     </Portal>
   );
 }

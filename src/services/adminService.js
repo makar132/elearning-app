@@ -4,6 +4,7 @@ import {
     getDocs,
     orderBy,
     query,
+    serverTimestamp,
     updateDoc,
     writeBatch
 } from 'firebase/firestore';
@@ -43,7 +44,7 @@ export const adminService = {
             const userRef = doc(db, 'users', userId);
             await updateDoc(userRef, {
                 ...updates,
-                updatedAt: new Date()
+                updatedAt: serverTimestamp()
             });
         } catch (error) {
             throw new Error('Failed to update user: ' + error.message);
@@ -165,9 +166,10 @@ export const adminService = {
             // Add statistics to courses
             return courses.map(course => ({
                 ...course,
-                enrollmentCount: courseEnrollments[course.id] || 0,
-                favoritesCount: courseFavorites[course.id] || 0,
-                wishlistCount: courseWishlists[course.id] || 0,
+                enrollmentCount: (course.stats?.joinCount ?? courseEnrollments[course.id] ?? 0),
+                favoritesCount: (courseFavorites[course.id] ?? 0),
+                wishlistCount: (course.stats?.wishlistCount ?? courseWishlists[course.id] ?? 0),
+
             }));
         } catch (error) {
             throw new Error('Failed to fetch courses with stats: ' + error.message);

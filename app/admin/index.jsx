@@ -1,19 +1,12 @@
-// app/admin/index.jsx
-
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import {
-  Alert,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  View,
-} from "react-native";
+import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
 import {
   ActivityIndicator,
   Button,
   Card,
   Chip,
+  Snackbar,
   Text,
 } from "react-native-paper";
 import StatsCard from "../../src/components/admin/StatsCard";
@@ -32,6 +25,8 @@ export default function AdminDashboard() {
   });
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarMsg, setSnackbarMsg] = useState("");
 
   const loadDashboardData = async (isRefresh = false) => {
     try {
@@ -41,7 +36,8 @@ export default function AdminDashboard() {
       const data = await adminService.getDashboardStats();
       setStats(data);
     } catch (error) {
-      Alert.alert("Error", "Failed to load dashboard data: " + error.message);
+      setSnackbarMsg(`Failed to load dashboard data: ${error.message}`);
+      setSnackbarVisible(true);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -130,7 +126,9 @@ export default function AdminDashboard() {
                 {stats.popularCourses.slice(0, 3).map((course) => (
                   <View key={course.id} style={styles.popularItem}>
                     <View style={styles.courseInfo}>
-                      <Text variant="titleMedium" style={styles.courseTitle}>{course.title}</Text>
+                      <Text variant="titleMedium" style={styles.courseTitle}>
+                        {course.title}
+                      </Text>
                       <Text variant="bodySmall" style={styles.courseInstructor}>
                         by {course.instructor}
                       </Text>
@@ -161,7 +159,7 @@ export default function AdminDashboard() {
             <Button
               mode="contained"
               icon="book-plus"
-              onPress={() => router.push("/admin/create-course")}
+              onPress={() => router.push("/admin/courses/create-course")}
               style={styles.button}
             >
               Create Course
@@ -177,6 +175,13 @@ export default function AdminDashboard() {
           </View>
         </View>
       </ScrollView>
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        duration={3000}
+      >
+        {snackbarMsg}
+      </Snackbar>
     </View>
   );
 }

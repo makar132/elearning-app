@@ -1,10 +1,10 @@
 // app/student/my-courses.jsx
 import { Ionicons } from "@expo/vector-icons";
+import { router } from 'expo-router';
 import { useEffect, useState } from "react";
 import { ScrollView, TextInput, TouchableOpacity, View } from "react-native";
 import { Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { router } from 'expo-router';
 
 import CourseCard from "../../src/components/CourseCard/CourseCard";
 import { courseService } from "../../src/services/courseService";
@@ -23,7 +23,9 @@ export default function MyCourses() {
       try {
         const fetchedCourses = await courseService.getAllCourses();
         const sortedCourses = fetchedCourses.sort((a, b) =>
-          a.title.localeCompare(b.title)
+          (a.titleLower ?? a.title ?? "").localeCompare(
+            b.titleLower ?? b.title ?? ""
+          )
         );
         setCourses(sortedCourses);
       } catch (error) {
@@ -45,17 +47,29 @@ export default function MyCourses() {
   }
 
   const filteredCourses = courses.filter((course) => {
-    const matchesSearch = course.title.toLowerCase().includes(searchText.toLowerCase());
-    const matchesCategory = selectedCategory === "All" || course.title.includes(selectedCategory);
+    const q = (searchText ?? "").trim().toLowerCase();
+    const titleL = (course.titleLower ?? course.title ?? "")
+      .toString()
+      .toLowerCase();
+    const categoryL = (course.categoryLower ?? course.category ?? "")
+      .toString()
+      .toLowerCase();
+
+    const matchesSearch =
+      q.length === 0 || titleL.includes(q) || categoryL.includes(q);
+    const matchesCategory =
+      selectedCategory === "All" ||
+      (course.category ?? "").toString() === selectedCategory;
+
     return matchesSearch && matchesCategory;
   });
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <Text style={styles.pageTitle}>My Courses</Text>
         <Text style={styles.pageSubtitle}>
-          {filteredCourses.length} Course{filteredCourses.length > 1 ? "s" : ""} Enrolled
+          {filteredCourses.length} Course{filteredCourses.length > 1 ? "s" : ""}{" "}
+          Enrolled
         </Text>
 
         <TextInput
@@ -65,14 +79,27 @@ export default function MyCourses() {
           onChangeText={setSearchText}
         />
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.categoryScroll}
+        >
           {categories.map((cat, index) => (
             <TouchableOpacity
               key={index}
-              style={[styles.categoryItem, selectedCategory === cat && styles.categoryItemSelected]}
+              style={[
+                styles.categoryItem,
+                selectedCategory === cat && styles.categoryItemSelected,
+              ]}
               onPress={() => setSelectedCategory(cat)}
             >
-              <Text style={selectedCategory === cat ? styles.categoryTextSelected : styles.categoryText}>
+              <Text
+                style={
+                  selectedCategory === cat
+                    ? styles.categoryTextSelected
+                    : styles.categoryText
+                }
+              >
                 {cat}
               </Text>
             </TouchableOpacity>

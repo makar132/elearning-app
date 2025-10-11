@@ -28,11 +28,15 @@ export async function uploadToCloudinary(fileUri, folderPath, onProgress) {
             const result = JSON.parse(xhr.responseText);
             if (xhr.status >= 200 && xhr.status < 300) {
                 resolve({
-                    publicId: result.public_id,
                     url: result.secure_url,
+                    publicId: result.public_id,
                     bytes: result.bytes,
                     format: result.format,
-                    resourceType: result.resource_type
+                    resourceType: result.resource_type,
+                    width: result.width,
+                    height: result.height,
+                    duration: result.duration,
+                    originalFilename: result.original_filename
                 });
             } else {
                 reject(new Error(result.error?.message || 'Upload error'));

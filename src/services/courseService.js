@@ -34,21 +34,14 @@ export const courseService = {
   /**
    * Create new course
    */
-  async createCourse(courseData) {
+  async createCourse(input) {
+
     try {
-      const coursesRef = collection(db, 'courses');
-      const title = (courseData.title ?? '').toString().trim();
-      const category = (courseData.category ?? '').toString().trim();
-      const docRef = await addDoc(coursesRef, {
-        ...courseData,
-        titleLower: title.toLowerCase(),
-        categoryLower: category.toLowerCase(),
-        price: Number(courseData.price) ?? 0,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-      });
+      const payload = normalizeCourseForWrite(input);
+      const docRef = await addDoc(collection(db, 'courses'), payload);
       return docRef.id;
-    } catch (error) {
+    }
+    catch (error) {
       throw new Error('Failed to create course: ' + error.message);
     }
   },
@@ -59,7 +52,7 @@ export const courseService = {
   async updateCourse(courseId, updates) {
     try {
       const courseRef = doc(db, 'courses', courseId);
-      const next = { ...updates, updatedAt: serverTimestamp() };
+      const next = normalizeCourseForWrite(updates, /*forUpdate*/ true);
       if (typeof updates.title === 'string') {
         next.titleLower = updates.title.trim().toLowerCase();
       }
@@ -122,3 +115,25 @@ export const fetchJoinedCourses = async (userId) => {
     return [];
   }
 };
+
+function normalizeCourseForWrite(input, isUpdate = false) {
+  const base = {
+    title: input.title,
+    titleLower: input.title?.toLowerCase() || null,
+    instructor: input.instructor,
+    email: (input.email || '').toLowerCase(),
+    category: input.category,
+    categoryLower: input.category?.toLowerCase() || null,
+    price: Number(input.price) || 0,
+    imageUrl: input.imageUrl || '',
+    imagePublicId: input.imagePublicId || null,
+    lessons: (input.lessons || []).map((l, i) => ({ ...l, order: i })),
+    updatedAt: serverTimestamp(),
+  };
+  if (!isUpdate) {
+    base.createdAt = serverTimestamp();
+    base.stats = input.stats || { joinCount: 0, wishlistCount: 0 };
+  }
+  return base;
+}
+

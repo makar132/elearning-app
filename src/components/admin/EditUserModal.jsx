@@ -1,0 +1,296 @@
+import { useEffect, useState } from "react";
+import { Alert, StyleSheet, View } from "react-native";
+import {
+  Button,
+  Card,
+  Chip,
+  Modal,
+  Portal,
+  RadioButton,
+  Text,
+  TextInput,
+} from "react-native-paper";
+import { adminService } from "../../services/adminService";
+
+export default function EditUserModal({
+  visible,
+  onDismiss,
+  user,
+  onUserUpdated,
+}) {
+  const [editedUser, setEditedUser] = useState({
+    name: "",
+    email: "",
+    role: "student",
+  });
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setEditedUser({
+        name: user.name || "",
+        email: user.email || "",
+        role: user.role || "student",
+      });
+    }
+  }, [user]);
+
+  const handleSave = async () => {
+    if (!editedUser.name.trim() || !editedUser.email.trim()) {
+      Alert.alert("Error", "Name and email are required");
+      return;
+    }
+    setLoading(true);
+    try {
+      await adminService.updateUser(user.id, {
+        name: editedUser.name.trim(),
+        email: editedUser.email.trim().toLowerCase(),
+        role: editedUser.role,
+      });
+      Alert.alert("Success", "User updated successfully");
+      onUserUpdated();
+      onDismiss();
+    } catch (error) {
+      Alert.alert("Error", "Failed to update user: " + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = () => {
+    Alert.alert(
+      "Delete User",
+      `Are you sure you want to delete ${user?.name}? This action cannot be undone.`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            setLoading(true);
+            try {
+              await adminService.deleteUser(user.id);
+              Alert.alert("Success", "User deleted successfully");
+              onUserUpdated();
+              onDismiss();
+            } catch (error) {
+              Alert.alert("Error", "Failed to delete user: " + error.message);
+            } finally {
+              setLoading(false);
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  if (!user) return null;
+
+  return (
+    <Portal>
+      <Modal
+        visible={visible}
+        onDismiss={onDismiss}
+        contentContainerStyle={styles.modal}
+      >
+        <Card style={styles.card}>
+          <Card.Title
+            title="Edit User"
+            subtitle={`ID: ${user.id}`}
+            titleStyle={styles.cardTitle}
+            subtitleStyle={styles.cardSubtitle}
+          />
+          <Card.Content>
+            {/* User Stats */}
+            <View style={styles.statsContainer}>
+              <Chip icon="book" compact mode="outlined" style={styles.statChip}>
+                {user.joinedCoursesCount} Courses
+              </Chip>
+              <Chip
+                icon="heart"
+                compact
+                mode="outlined"
+                style={styles.statChip}
+              >
+                {user.favoritesCount} Favorites
+              </Chip>
+              <Chip
+                icon="bookmark"
+                compact
+                mode="outlined"
+                style={styles.statChip}
+              >
+                {user.wishlistCount} Wishlist
+              </Chip>
+            </View>
+
+            {/* Form Fields */}
+            <TextInput
+              label="Name"
+              value={editedUser.name}
+              onChangeText={(text) =>
+                setEditedUser((prev) => ({ ...prev, name: text }))
+              }
+              mode="outlined"
+              style={styles.input}
+              disabled={loading}
+              outlineColor="#E0E0E0"
+              activeOutlineColor="#2196F3"
+            />
+
+            <TextInput
+              label="Email"
+              value={editedUser.email}
+              onChangeText={(text) =>
+                setEditedUser((prev) => ({ ...prev, email: text }))
+              }
+              keyboardType="email-address"
+              autoCapitalize="none"
+              mode="outlined"
+              style={styles.input}
+              disabled={loading}
+              outlineColor="#E0E0E0"
+              activeOutlineColor="#2196F3"
+            />
+
+            {/* Role Selection */}
+            <View style={styles.roleSection}>
+              <Text variant="titleMedium" style={styles.roleTitle}>
+                Role
+              </Text>
+              <RadioButton.Group
+                onValueChange={(value) =>
+                  setEditedUser((prev) => ({ ...prev, role: value }))
+                }
+                value={editedUser.role}
+              >
+                <View style={styles.radioOption}>
+                  <RadioButton
+                    value="student"
+                    disabled={loading}
+                    color="#2196F3"
+                  />
+                  <Text style={styles.radioText}>Student</Text>
+                </View>
+                <View style={styles.radioOption}>
+                  <RadioButton
+                    value="admin"
+                    disabled={loading}
+                    color="#2196F3"
+                  />
+                  <Text style={styles.radioText}>Admin</Text>
+                </View>
+              </RadioButton.Group>
+            </View>
+          </Card.Content>
+
+          <Card.Actions style={styles.actions}>
+            <Button
+              mode="outlined"
+              onPress={handleDelete}
+              disabled={loading}
+              textColor="#F44336"
+              style={styles.deleteButton}
+            >
+              Delete User
+            </Button>
+            <View style={styles.rightActions}>
+              <Button
+                mode="outlined"
+                onPress={onDismiss}
+                disabled={loading}
+                style={styles.cancelButton}
+              >
+                Cancel
+              </Button>
+              <Button
+                mode="contained"
+                onPress={handleSave}
+                loading={loading}
+                disabled={loading}
+                style={styles.saveButton}
+              >
+                Save Changes
+              </Button>
+            </View>
+          </Card.Actions>
+        </Card>
+      </Modal>
+    </Portal>
+  );
+}
+
+const styles = StyleSheet.create({
+  modal: {
+    padding: 20,
+    justifyContent: "center",
+  },
+  card: {
+    maxWidth: 500,
+    alignSelf: "center",
+    width: "100%",
+    backgroundColor: "#FFFFFF",
+    elevation: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+  },
+  cardTitle: {
+    color: "#333333",
+    fontWeight: "600",
+  },
+  cardSubtitle: {
+    color: "#666666",
+  },
+  statsContainer: {
+    flexDirection: "row",
+    gap: 8,
+    marginBottom: 20,
+    flexWrap: "wrap",
+  },
+  statChip: {
+    backgroundColor: "#F9FAFB",
+    borderColor: "#E0E0E0",
+  },
+  input: {
+    marginBottom: 16,
+    backgroundColor: "#FFFFFF",
+  },
+  roleSection: {
+    marginTop: 8,
+  },
+  roleTitle: {
+    marginBottom: 12,
+    color: "#333333",
+    fontWeight: "600",
+  },
+  radioOption: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  radioText: {
+    marginLeft: 8,
+    color: "#333333",
+  },
+  actions: {
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+    paddingTop: 8,
+  },
+  rightActions: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  deleteButton: {
+    borderColor: "#F44336",
+  },
+  cancelButton: {
+    borderColor: "#E0E0E0",
+  },
+  saveButton: {
+    backgroundColor: "#2196F3",
+  },
+});

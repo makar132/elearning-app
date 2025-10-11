@@ -44,6 +44,6 @@ app-example
 
 *.sh
 *.txt
-
+.env
 # Ignore secret API keys
 secret.js

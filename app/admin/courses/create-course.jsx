@@ -1,23 +1,27 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Alert, StyleSheet, View } from "react-native";
-import { FAB } from "react-native-paper";
+import { StyleSheet, View } from "react-native";
+import { FAB, Snackbar } from "react-native-paper";
 import CourseForm from "../../../src/components/admin/CourseForm";
 import { courseService } from "../../../src/services/courseService";
 import theme, { Colors } from "../../../src/styles/theme";
 
 export default function CreateCourseScreen() {
   const [loading, setLoading] = useState(false);
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarMsg, setSnackbarMsg] = useState("");
   const router = useRouter();
 
   const handleCreate = async (course) => {
     setLoading(true);
     try {
       await courseService.createCourse(course);
-      Alert.alert("Success", "Course created successfully");
+      setSnackbarMsg("Course created successfully");
+      setSnackbarVisible(true);
       router.push("/admin/courses");
     } catch (error) {
-      Alert.alert("Error", "Failed to create course: " + error.message);
+      setSnackbarMsg(`Failed to create course: ${error.message}`);
+      setSnackbarVisible(true);
     } finally {
       setLoading(false);
     }
@@ -30,6 +34,13 @@ export default function CreateCourseScreen() {
         onCancel={() => router.back()}
         loading={loading}
       />
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        duration={3000}
+      >
+        {snackbarMsg}
+      </Snackbar>
       <FAB
         icon="close"
         style={[styles.fab, { backgroundColor: Colors.secondary }]}

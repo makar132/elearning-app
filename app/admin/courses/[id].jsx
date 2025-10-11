@@ -1,7 +1,7 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert, StyleSheet, View } from "react-native";
-import { ActivityIndicator } from "react-native-paper";
+import { StyleSheet, View } from "react-native";
+import { ActivityIndicator, Snackbar } from "react-native-paper";
 import CourseForm from "../../../src/components/admin/CourseForm";
 import { courseService } from "../../../src/services/courseService";
 import theme, { Colors } from "../../../src/styles/theme";
@@ -12,6 +12,8 @@ export default function EditCourseScreen() {
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarMsg, setSnackbarMsg] = useState("");
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -19,9 +21,9 @@ export default function EditCourseScreen() {
         const data = await courseService.getCourseById(id);
         setCourse(data);
       } catch (error) {
-        Alert.alert("Error", "Failed to load course: " + error.message, [
-          { text: "OK", onPress: () => router.back() },
-        ]);
+        setSnackbarMsg(`Failed to load course: ${error.message}`);
+        setSnackbarVisible(true);
+        router.back();
       } finally {
         setLoading(false);
       }
@@ -33,10 +35,12 @@ export default function EditCourseScreen() {
     setSaving(true);
     try {
       await courseService.updateCourse(id, updated);
-      Alert.alert("Success", "Course updated successfully");
+      setSnackbarMsg("Course updated successfully");
+      setSnackbarVisible(true);
       router.push("/admin/courses");
     } catch (error) {
-      Alert.alert("Error", error.message);
+      setSnackbarMsg(`Failed to update: ${error.message}`);
+      setSnackbarVisible(true);
     } finally {
       setSaving(false);
     }
@@ -58,6 +62,13 @@ export default function EditCourseScreen() {
         onCancel={() => router.back()}
         loading={saving}
       />
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        duration={3000}
+      >
+        {snackbarMsg}
+      </Snackbar>
     </View>
   );
 }

@@ -1,5 +1,5 @@
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { auth, db } from './firebaseConfig.js';
 
 // Sign up
@@ -10,12 +10,13 @@ export const register = async ({ fullName, email, password, role = 'student' }) 
 
     const userData = {
       name: fullName,
-      email,
+      email:email.toLowerCase(),
       role,
       joinedCourses: [],
       favorites: [],
       wishlist: [],
-      createdAt: new Date(),
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
     };
 
     await setDoc(doc(db, 'users', user.uid), userData);

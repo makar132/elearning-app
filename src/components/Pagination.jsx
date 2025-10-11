@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Colors, Spacing, Typography } from "../../src/styles/theme";
+import { Colors, Spacing } from "../../src/styles/theme";
 
 export default function Pagination({ currentPage, totalPages, onPageChange }) {
   const pages = [];
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.md,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.bgLight,
   },
   button: {
     marginHorizontal: 6,
@@ -90,13 +90,6 @@ const styles = StyleSheet.create({
   active: {
     backgroundColor: Colors.primary,
   },
-  buttonText: {
-    fontFamily: Typography.fontFamily,
-    fontSize: Typography.fontSizeMedium,
-    color: Colors.primary,
-  },
-  activeText: {
-    color: Colors.textPrimary,
-    fontWeight: Typography.fontWeightBold,
-  },
+  buttonText: { fontSize: 14, color: Colors.primary },
+  activeText: { color: Colors.textPrimary, fontWeight: "700" },
 });

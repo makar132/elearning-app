@@ -1,6 +1,6 @@
-import { useRouter } from "expo-router";
-import { StyleSheet, View, Text, TouchableOpacity, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useAuth } from "../../context/AuthContext";
 
 export function Header({ title = "Page", showBack = true }) {
@@ -23,11 +23,11 @@ export function Header({ title = "Page", showBack = true }) {
               console.log("Logout result:", result);
               
               // Navigate regardless of result to ensure logout
-              router.replace("/auth/login");
+              router.replace("/auth");
             } catch (error) {
               console.error("Logout error:", error);
               // Navigate even on error
-              router.replace("/auth/login");
+              router.replace("/auth");
             }
           },
         },

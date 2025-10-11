@@ -2,15 +2,19 @@ import { router } from "expo-router";
 import LottieView from "lottie-react-native";
 import { View } from "react-native";
 import { Button, IconButton, Text } from "react-native-paper";
+import { useDispatch } from "react-redux";
+import { completeOnboarding } from "../../src/redux/onboardingSlice";
 import {
   colors,
   onboardingStyles as styles,
 } from "../../src/utils/onboardingStyles";
 
 export default function Onboarding3() {
-  const handleComplete = () => {
+  const dispatch = useDispatch();
+  const handleComplete = async () => {
+    await dispatch(completeOnboarding());
     router.replace("/auth");
-  };
+  }
 
   return (
     <View style={[styles.container, { backgroundColor: colors.onboarding3 }]}>

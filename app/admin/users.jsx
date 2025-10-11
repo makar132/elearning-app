@@ -1,53 +1,59 @@
-import { useMemo, useState } from "react";
-import { Alert, ScrollView, StyleSheet, View } from "react-native";
+import { useEffect, useMemo, useState } from "react";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { ActivityIndicator, FAB, Snackbar, Text } from "react-native-paper";
 import EditUserModal from "../../src/components/admin/EditUserModal";
 import UserTable from "../../src/components/admin/UserTable";
 import Pagination from "../../src/components/Pagination";
 import { useFirestoreCollection } from "../../src/hooks/useFirestoreCollection";
 import theme, { Colors } from "../../src/styles/theme";
-
 const PAGE_SIZE = 10;
 
 export default function UsersScreen() {
-  // const [users, setUsers] = useState([]);
-  // const [loading, setLoading] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [selectedUser, setSelectedUser] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMsg, setSnackbarMsg] = useState("");
+  const showSoon = () => {
+    setSnackbarMsg("Add user is not implemented yet");
+    setSnackbarVisible(true);
+  };
+
   const { data: users, loading } = useFirestoreCollection("users");
 
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(users.length / PAGE_SIZE);
 
+  // const totalPages = Math.ceil(users.length / PAGE_SIZE);
+  // const currentUsers = useMemo(() => {
+  //   const start = (currentPage - 1) * PAGE_SIZE;
+  //   return users.slice(start, start + PAGE_SIZE);
+  // }, [users, currentPage]);
+
+  const filtered = useMemo(() => {
+    const q = (searchQuery ?? "").toLowerCase();
+    return users.filter((u) => {
+      const nameL = String(u.name ?? "").toLowerCase();
+      const emailL = String(u.email ?? "").toLowerCase();
+      const matchesSearch = nameL.includes(q) || emailL.includes(q);
+      const matchesRole = roleFilter === "all" || u.role === roleFilter;
+      return matchesSearch && matchesRole;
+    });
+  }, [users, searchQuery, roleFilter]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const currentUsers = useMemo(() => {
     const start = (currentPage - 1) * PAGE_SIZE;
-    return users.slice(start, start + PAGE_SIZE);
-  }, [users, currentPage]);
+    return filtered.slice(start, start + PAGE_SIZE);
+  }, [filtered, currentPage]);
 
-  // const loadUsers = async (isRefresh = false) => {
-  //   try {
-  //     if (isRefresh) setRefreshing(true);
-  //     else setLoading(true);
-  //     const data = await adminService.getAllUsers();
-  //     setUsers(data);
-  //   } catch (error) {
-  //     Alert.alert("Error", "Failed to load users: " + error.message);
-  //   } finally {
-  //     setLoading(false);
-  //     setRefreshing(false);
-  //   }
-  // };
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, roleFilter]);
 
-  // useEffect(() => {
-  //   loadUsers();
-  // }, []);
-
-  // const onRefresh = () => loadUsers(true);
+  useEffect(() => {
+    if (currentPage > totalPages) setCurrentPage(totalPages);
+  }, [totalPages, currentPage]);
 
   const onEditUser = (user) => {
     setSelectedUser(user);
@@ -56,7 +62,6 @@ export default function UsersScreen() {
 
   const onUserUpdated = () => {
     setModalVisible(false);
-    // loadUsers();
     setSnackbarMsg("User updated successfully");
     setSnackbarVisible(true);
   };
@@ -73,18 +78,20 @@ export default function UsersScreen() {
   return (
     <View style={theme.container}>
       <>
-        <ScrollView
-          style={styles.scroll}
-          // refreshControl={
-          //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          // }
-        >
-          {/* <View style={styles.header}>
-            <Text variant="headlineLarge">Users</Text>
-            <Text variant="bodyMedium">{users.length} total users</Text>
-          </View> */}
+        <ScrollView style={styles.scroll}>
+          {/* <UserTable
+            users={currentUsers}
+            onEditUser={onEditUser}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            roleFilter={roleFilter}
+            onRoleChange={setRoleFilter}
+            loading={loading}
+          /> */}
           <UserTable
             users={currentUsers}
+            totalCount={users.length}
+            filteredCount={filtered.length}
             onEditUser={onEditUser}
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
@@ -100,13 +107,7 @@ export default function UsersScreen() {
         />
       </>
 
-      <FAB
-        icon="plus"
-        label="Add User"
-        onPress={() => Alert.alert("Not implemented")}
-        style={styles.fab}
-      />
-
+      <FAB icon="plus" label="Add User" onPress={showSoon} style={styles.fab} />
       <EditUserModal
         visible={modalVisible}
         onDismiss={() => setModalVisible(false)}

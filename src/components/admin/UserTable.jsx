@@ -14,6 +14,8 @@ import { getRoleDisplayName } from "../../utils/permissions";
 
 export default function UserTable({
   users,
+  totalCount,
+  filteredCount,
   onEditUser,
   searchQuery,
   onSearchChange,
@@ -23,26 +25,18 @@ export default function UserTable({
 }) {
   const [menuVisible, setMenuVisible] = React.useState(false);
 
-  const filteredUsers = users.filter((user) => {
-    console.log("checking user: ", user);
-    const matchesSearch =
-      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesRole = roleFilter === "all" || user.role === roleFilter;
-    return matchesSearch && matchesRole;
-  });
-
   const getRoleColor = (role) => (role === "admin" ? "#D32F2F" : "#4CAF50");
 
   return (
-    <Card style={[styles.card , {flex:1}]}>
+    <Card style={[styles.card, { flex: 1 }]}>
       <Card.Content style={[styles.cardContent, { flex: 1 }]}>
         <View style={styles.header}>
           <Text variant="titleLarge" style={styles.headerTitle}>
             User Management
           </Text>
           <Text style={styles.subtitle}>
-            {filteredUsers.length} of {users.length} users
+            {filteredCount ?? users.length} of {totalCount ?? users.length}{" "}
+            users
           </Text>
         </View>
 
@@ -102,7 +96,7 @@ export default function UserTable({
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{ flexGrow: 1, width: "100%" }}
-          style={{flex:1}}
+          style={{ flex: 1 }}
         >
           <DataTable style={styles.table}>
             <DataTable.Header style={styles.tableHeader}>
@@ -147,7 +141,7 @@ export default function UserTable({
               </DataTable.Title>
             </DataTable.Header>
 
-            {filteredUsers.map((user) => (
+            {users.map((user) => (
               <DataTable.Row key={user.id} style={styles.row}>
                 <DataTable.Cell style={styles.nameColumn}>
                   <View>
@@ -174,17 +168,19 @@ export default function UserTable({
                 </DataTable.Cell>
                 <DataTable.Cell numeric style={styles.statsColumn}>
                   <Text style={styles.statsText}>
-                    {user.joinedCoursesCount || 0}
+                    {Array.isArray(user.joinedCourses)
+                      ? user.joinedCourses.length
+                      : 0}
                   </Text>
                 </DataTable.Cell>
                 <DataTable.Cell numeric style={styles.statsColumn}>
                   <Text style={styles.statsText}>
-                    {user.favoritesCount || 0}
+                    {Array.isArray(user.favorites) ? user.favorites.length : 0}
                   </Text>
                 </DataTable.Cell>
                 <DataTable.Cell numeric style={styles.statsColumn}>
                   <Text style={styles.statsText}>
-                    {user.wishlistCount || 0}
+                    {Array.isArray(user.wishlist) ? user.wishlist.length : 0}
                   </Text>
                 </DataTable.Cell>
                 <DataTable.Cell style={styles.actionColumn}>
@@ -200,7 +196,7 @@ export default function UserTable({
               </DataTable.Row>
             ))}
 
-            {filteredUsers.length === 0 && (
+            {!loading && users.length === 0 && (
               <View style={styles.emptyContainer}>
                 <Text style={styles.emptyText}>
                   No users found matching the criteria.

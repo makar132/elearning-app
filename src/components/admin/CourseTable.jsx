@@ -13,51 +13,18 @@ import {
 
 export default function CourseTable({
   courses,
+  totalCount,
+  filteredCount,
   onEditCourse,
   onDeleteCourse,
   searchQuery,
   onSearchChange,
   categoryFilter,
   onCategoryChange,
+  categories = [],
   loading,
 }) {
   const [menuVisible, setMenuVisible] = React.useState(false);
-  const categories = [
-    ...new Set(courses.map((c) => c.category).filter(Boolean)),
-  ];
-
-  // const filtered = courses.filter((course) => {
-  //   console.log("checking course: ", course);
-  //   const matchesSearch =
-  //     course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //     course.instructor.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //     course.category.toLowerCase().includes(searchQuery.toLowerCase());
-  //   const matchesCategory =
-  //     categoryFilter === "all" || course.category === categoryFilter;
-  //   return matchesSearch && matchesCategory;
-  // });
-
-  const filtered = courses.filter((course) => {
-    const q = (searchQuery ?? "").trim().toLowerCase();
-    const titleL = (course.titleLower ?? course.title ?? "")
-      .toString()
-      .toLowerCase();
-    const categoryL = (course.categoryLower ?? course.category ?? "")
-      .toString()
-      .toLowerCase();
-    const instructorL = (course.instructor ?? "").toString().toLowerCase(); // no *_lower in DB
-
-    const matchesSearch =
-      q.length === 0 ||
-      titleL.includes(q) ||
-      categoryL.includes(q) ||
-      instructorL.includes(q);
-
-    const matchesCategory =
-      categoryFilter === "all" || course.category === categoryFilter;
-
-    return matchesSearch && matchesCategory;
-  });
 
   const formatDate = (timestamp) => {
     if (!timestamp) return "N/A";
@@ -73,7 +40,8 @@ export default function CourseTable({
             Course Management
           </Text>
           <Text style={styles.subtitle}>
-            {filtered.length} of {courses.length} courses
+            {filteredCount ?? courses.length} of {totalCount ?? courses.length}{" "}
+            courses
           </Text>
         </View>
 
@@ -130,6 +98,7 @@ export default function CourseTable({
           contentContainerStyle={{ flexGrow: 1 }}
         >
           <DataTable style={styles.table}>
+            {/* header same as before */}
             <DataTable.Header style={styles.tableHeader}>
               <DataTable.Title
                 style={styles.imageCol}
@@ -183,7 +152,7 @@ export default function CourseTable({
               </DataTable.Title>
             </DataTable.Header>
 
-            {filtered.map((course) => (
+            {courses.map((course) => (
               <DataTable.Row key={course.id} style={styles.row}>
                 <DataTable.Cell style={styles.imageCol}>
                   {course.imageUrl ? (
@@ -198,6 +167,7 @@ export default function CourseTable({
                     </View>
                   )}
                 </DataTable.Cell>
+
                 <DataTable.Cell style={styles.titleCol}>
                   <View>
                     <Text variant="bodyMedium" style={styles.courseTitle}>
@@ -208,6 +178,7 @@ export default function CourseTable({
                     </Text>
                   </View>
                 </DataTable.Cell>
+
                 <DataTable.Cell style={styles.categoryCol}>
                   <Chip
                     compact
@@ -218,24 +189,29 @@ export default function CourseTable({
                     {course.category}
                   </Chip>
                 </DataTable.Cell>
+
                 <DataTable.Cell style={styles.priceCol}>
                   <Text style={styles.priceText}>${course.price}</Text>
                 </DataTable.Cell>
+
                 <DataTable.Cell numeric style={styles.statCol}>
                   <Text style={styles.statsText}>
                     {course.enrollmentCount || 0}
                   </Text>
                 </DataTable.Cell>
+
                 <DataTable.Cell numeric style={styles.statCol}>
                   <Text style={styles.statsText}>
                     {course.favoritesCount || 0}
                   </Text>
                 </DataTable.Cell>
+
                 <DataTable.Cell style={styles.dateCol}>
                   <Text style={styles.dateText}>
                     {formatDate(course.createdAt)}
                   </Text>
                 </DataTable.Cell>
+
                 <DataTable.Cell style={styles.actionCol}>
                   <View style={styles.actionButtons}>
                     <IconButton
@@ -259,7 +235,7 @@ export default function CourseTable({
               </DataTable.Row>
             ))}
 
-            {filtered.length === 0 && (
+            {!loading && filteredCount === 0 && (
               <View style={styles.emptyState}>
                 <Text style={styles.emptyText}>
                   No courses match your criteria.

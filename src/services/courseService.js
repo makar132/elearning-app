@@ -37,10 +37,15 @@ export const courseService = {
   async createCourse(courseData) {
     try {
       const coursesRef = collection(db, 'courses');
+      const title = (courseData.title ?? '').toString().trim();
+      const category = (courseData.category ?? '').toString().trim();
       const docRef = await addDoc(coursesRef, {
         ...courseData,
+        titleLower: title.toLowerCase(),
+        categoryLower: category.toLowerCase(),
+        price: Number(courseData.price) ?? 0,
         createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp()
+        updatedAt: serverTimestamp(),
       });
       return docRef.id;
     } catch (error) {
@@ -54,10 +59,17 @@ export const courseService = {
   async updateCourse(courseId, updates) {
     try {
       const courseRef = doc(db, 'courses', courseId);
-      await updateDoc(courseRef, {
-        ...updates,
-        updatedAt: serverTimestamp()
-      });
+      const next = { ...updates, updatedAt: serverTimestamp() };
+      if (typeof updates.title === 'string') {
+        next.titleLower = updates.title.trim().toLowerCase();
+      }
+      if (typeof updates.category === 'string') {
+        next.categoryLower = updates.category.trim().toLowerCase();
+      }
+      if (typeof updates.price !== 'undefined') {
+        next.price = Number(updates.price);
+      }
+      await updateDoc(courseRef, next);
     } catch (error) {
       throw new Error('Failed to update course: ' + error.message);
     }
@@ -97,9 +109,9 @@ export const courseService = {
   }
 };
 
- /**
-   * Get joined courses
-   */
+/**
+  * Get joined courses
+  */
 export const fetchJoinedCourses = async (userId) => {
   try {
     const userDoc = await getDoc(doc(db, 'users', userId));

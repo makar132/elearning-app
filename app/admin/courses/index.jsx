@@ -1,11 +1,14 @@
 import { router } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
 import { ActivityIndicator, FAB, Snackbar, Text } from "react-native-paper";
 import CourseTable from "../../../src/components/admin/CourseTable";
 import ConfirmationModal from "../../../src/components/ConfirmationModal";
+import Pagination from "../../../src/components/Pagination";
 import { adminService } from "../../../src/services/adminService";
 import theme, { Colors } from "../../../src/styles/theme";
+
+const PAGE_SIZE = 10;
 
 export default function CoursesScreen() {
   const [courses, setCourses] = useState([]);
@@ -18,11 +21,12 @@ export default function CoursesScreen() {
   const [confirm, setConfirm] = useState({ open: false, course: null });
   const [deleting, setDeleting] = useState(false);
 
+  const [currentPage, setCurrentPage] = useState(1);
+
   const loadCourses = async (isRefresh = false) => {
     try {
       if (isRefresh) setRefreshing(true);
       else setLoading(true);
-
       const data = await adminService.getAllCoursesWithStats();
       setCourses(data);
     } catch (error) {
@@ -40,13 +44,8 @@ export default function CoursesScreen() {
 
   const onRefresh = () => loadCourses(true);
 
-  const onEditCourse = (course) => {
-    router.push(`/admin/courses/${course.id}`);
-  };
-
-  const onDeleteCourse = (course) => {
-    setConfirm({ open: true, course });
-  };
+  const onEditCourse = (course) => router.push(`/admin/courses/${course.id}`);
+  const onDeleteCourse = (course) => setConfirm({ open: true, course });
 
   const confirmDelete = async () => {
     if (!confirm.course) return;
@@ -64,6 +63,51 @@ export default function CoursesScreen() {
       setConfirm({ open: false, course: null });
     }
   };
+
+  const categories = useMemo(
+    () => [...new Set(courses.map((c) => c.category).filter(Boolean))],
+    [courses]
+  );
+
+  const filtered = useMemo(() => {
+    const q = (searchQuery ?? "").trim().toLowerCase();
+    return courses.filter((course) => {
+      const titleL = (course.titleLower ?? course.title ?? "")
+        .toString()
+        .toLowerCase();
+      const categoryL = (course.categoryLower ?? course.category ?? "")
+        .toString()
+        .toLowerCase();
+      const instructorL = (course.instructor ?? "").toString().toLowerCase();
+
+      const matchesSearch =
+        q.length === 0 ||
+        titleL.includes(q) ||
+        categoryL.includes(q) ||
+        instructorL.includes(q);
+
+      const matchesCategory =
+        categoryFilter === "all" ||
+        (course.categoryLower ?? course.category ?? "")
+          .toString()
+          .toLowerCase() === categoryFilter.toLowerCase();
+
+      return matchesSearch && matchesCategory;
+    });
+  }, [courses, searchQuery, categoryFilter]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const currentCourses = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return filtered.slice(start, start + PAGE_SIZE);
+  }, [filtered, currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, categoryFilter]);
+  useEffect(() => {
+    if (currentPage > totalPages) setCurrentPage(totalPages);
+  }, [totalPages, currentPage]);
 
   return (
     <View style={theme.container}>
@@ -84,19 +128,28 @@ export default function CoursesScreen() {
               Courses
             </Text>
             <Text variant="bodyMedium" style={styles.subtitle}>
-              {courses.length} courses available
+              {filtered.length} of {courses.length} courses
             </Text>
           </View>
 
           <CourseTable
-            courses={courses}
-            onEditCourse={onEditCourse}
-            onDeleteCourse={onDeleteCourse}
+            courses={currentCourses}
+            totalCount={courses.length}
+            filteredCount={filtered.length}
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
             categoryFilter={categoryFilter}
             onCategoryChange={setCategoryFilter}
+            categories={categories}
             loading={loading}
+            onEditCourse={onEditCourse}
+            onDeleteCourse={onDeleteCourse}
+          />
+
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
           />
         </ScrollView>
       )}

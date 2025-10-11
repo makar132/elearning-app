@@ -103,7 +103,7 @@ export default function EditUserModal({
             {/* User Stats */}
             <View style={styles.statsContainer}>
               <Chip icon="book" compact mode="outlined" style={styles.statChip}>
-                {user.joinedCoursesCount} Courses
+                {(user.joinedCourses?.length || 0)} Courses
               </Chip>
               <Chip
                 icon="heart"
@@ -111,7 +111,7 @@ export default function EditUserModal({
                 mode="outlined"
                 style={styles.statChip}
               >
-                {user.favoritesCount} Favorites
+                {(user.favorites?.length || 0)} Favorites
               </Chip>
               <Chip
                 icon="bookmark"
@@ -119,7 +119,7 @@ export default function EditUserModal({
                 mode="outlined"
                 style={styles.statChip}
               >
-                {user.wishlistCount} Wishlist
+                {(user.wishlist?.length || 0)} Wishlist
               </Chip>
             </View>
 

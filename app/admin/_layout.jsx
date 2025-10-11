@@ -21,7 +21,7 @@ export default function AdminLayout() {
 
   useEffect(() => {
     if (!isLoading) {
-      if (!user) router.replace("/auth/login");
+      if (!user) router.replace("/auth");
       else if (user.role !== "admin") router.replace("/student/dashboard");
     }
   }, [user, isLoading]);
@@ -52,7 +52,7 @@ export default function AdminLayout() {
             mode="text"
             onPress={async () => {
               await logout();
-              router.replace("/auth");
+              // router.replace("/auth");
             }}
             labelStyle={{ color: "#fff", ...Typography.body }}
             style={{ marginRight: 16 }}

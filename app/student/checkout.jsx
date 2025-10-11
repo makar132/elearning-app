@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { StatusBar, View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { useCart } from '../../src/context/CartContext';
+import { useRouter } from 'expo-router';
+import { useState } from 'react';
+import { ScrollView, StatusBar, Text, TouchableOpacity, View } from 'react-native';
 import { useAuth } from '../../src/context/AuthContext';
+import { useCart } from '../../src/context/CartContext';
 import styles from '../../src/utils/Checkout.styles';
 
 import CheckoutHeader from '../../src/components/checkout/CheckoutHeader';
-import CourseList from '../../src/components/checkout/CourseList';
 import ConfirmationModals from '../../src/components/checkout/ConfirmationModals';
+import CourseList from '../../src/components/checkout/CourseList';
 
 export default function CheckoutScreen() {
   const router = useRouter();
@@ -56,7 +56,7 @@ export default function CheckoutScreen() {
   );
 
   if (!user) return <EmptyState icon="person-circle-outline" title="Login Required" subtitle="Please login to view checkout" buttonText="Go to Login" 
-  onPress={() => router.push('/auth/login')} />;
+  onPress={() => router.push('/auth')} />;
 
   if (!enrolledCourses.length) return <EmptyState icon="cart-outline" title="Your cart is empty" subtitle="Browse courses and add them to checkout" buttonText="Browse Courses"
   onPress={() => router.push('/student/dashboard')} />;

@@ -7,17 +7,21 @@ import {
   onboardingStyles as styles,
 } from "../../src/utils/onboardingStyles";
 
+import { useDispatch } from "react-redux";
+import { completeOnboarding } from "../../src/redux/onboardingSlice";
+
 const Onboarding2 = () => {
-  const handleComplete = () => {
-    router.replace("/auth");
-  };
+  const dispatch = useDispatch();
 
   return (
     <View style={[styles.container, { backgroundColor: colors.onboarding2 }]}>
       {/* Skip Button */}
       <Button
         mode="text"
-        onPress={handleComplete}
+        onPress={async () => {
+          await dispatch(completeOnboarding());
+          router.replace("/auth");
+        }}
         style={styles.skipButton}
         textColor={colors.skipText}
       >

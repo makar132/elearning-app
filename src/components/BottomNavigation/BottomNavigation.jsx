@@ -41,7 +41,7 @@ export default function BottomNav() {
     toggleSidebar();
     await new Promise(r => setTimeout(r, 300));
     await logout();
-    router.replace('/auth/login');
+    router.replace('/auth');
   };
 
   const handleNavPress = (item) => {

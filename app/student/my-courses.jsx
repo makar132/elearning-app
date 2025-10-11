@@ -1,7 +1,7 @@
 // app/student/my-courses.jsx
 import { Ionicons } from "@expo/vector-icons";
-import { router } from 'expo-router';
-import { useEffect, useState } from "react";
+import { router } from "expo-router";
+import { useEffect, useMemo, useState } from "react";
 import { ScrollView, TextInput, TouchableOpacity, View } from "react-native";
 import { Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -12,10 +12,12 @@ import { MyCoursesStyles as styles } from "../../src/utils/myCoursesStyles";
 
 export default function MyCourses() {
   const [searchText, setSearchText] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const categories = ["All", "UI/UX", "Figma", "React Native", "JavaScript"];
-
-  const [courses, setCourses] = useState([]);
+   const [selectedCategory, setSelectedCategory] = useState("All");
+ const [courses, setCourses] = useState([]);
+ const categories = useMemo(
+   () => ["All", ...new Set(courses.map(c => c.category).filter(Boolean))],
+   [courses]
+ );
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -59,8 +61,9 @@ export default function MyCourses() {
       q.length === 0 || titleL.includes(q) || categoryL.includes(q);
     const matchesCategory =
       selectedCategory === "All" ||
-      (course.category ?? "").toString() === selectedCategory;
-
+      (course.categoryLower ?? course.category ?? "")
+        .toString()
+        .toLowerCase() === selectedCategory.toLowerCase();
     return matchesSearch && matchesCategory;
   });
   return (
@@ -118,7 +121,10 @@ export default function MyCourses() {
               course={course}
               onPressDetail={(id) =>
                 // ✅ الصح
-                router.push({ pathname: '/student/course-details', params: { id } })
+                router.push({
+                  pathname: "/student/course-details",
+                  params: { id },
+                })
               }
               onPressEnroll={(id) => console.log("Enroll", id)}
               onPressFavorite={(id) => console.log("Favorite", id)}

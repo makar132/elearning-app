@@ -1,11 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
-
-// Temporary reducer until we add real slices
-const tempReducer = (state = { initialized: true }, action) => state;
-
+import favorites from './favoritesSlice';
+import onboarding from './onboardingSlice';
 export const store = configureStore({
   reducer: {
-    temp: tempReducer,
+    favorites,
+    onboarding,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

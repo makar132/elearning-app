@@ -2,17 +2,20 @@ import { router } from "expo-router";
 import LottieView from "lottie-react-native";
 import { View } from "react-native";
 import { Button, Text } from "react-native-paper";
+import { useDispatch } from "react-redux";
+import { completeOnboarding } from "../../src/redux/onboardingSlice";
 import {
   colors,
   onboardingStyles as styles,
 } from "../../src/utils/onboardingStyles";
 
 export default function Onboarding1() {
+  const dispatch = useDispatch();
   return (
     <View style={[styles.container, { backgroundColor: colors.onboarding1 }]}>
       <Button
         mode="text"
-        onPress={() => router.replace("/auth")}
+        onPress={async () => { await dispatch(completeOnboarding()); router.replace("/auth"); }}
         style={styles.skipButton}
         textColor={colors.skipText}
       >

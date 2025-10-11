@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { ActivityIndicator, FAB, Snackbar, Text } from "react-native-paper";
 import EditUserModal from "../../src/components/admin/EditUserModal";
@@ -6,7 +6,6 @@ import UserTable from "../../src/components/admin/UserTable";
 import Pagination from "../../src/components/Pagination";
 import { useFirestoreCollection } from "../../src/hooks/useFirestoreCollection";
 import theme, { Colors } from "../../src/styles/theme";
-
 const PAGE_SIZE = 10;
 
 export default function UsersScreen() {
@@ -24,12 +23,37 @@ export default function UsersScreen() {
   const { data: users, loading } = useFirestoreCollection("users");
 
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(users.length / PAGE_SIZE);
 
+  // const totalPages = Math.ceil(users.length / PAGE_SIZE);
+  // const currentUsers = useMemo(() => {
+  //   const start = (currentPage - 1) * PAGE_SIZE;
+  //   return users.slice(start, start + PAGE_SIZE);
+  // }, [users, currentPage]);
+
+  const filtered = useMemo(() => {
+    const q = (searchQuery ?? "").toLowerCase();
+    return users.filter((u) => {
+      const nameL = String(u.name ?? "").toLowerCase();
+      const emailL = String(u.email ?? "").toLowerCase();
+      const matchesSearch = nameL.includes(q) || emailL.includes(q);
+      const matchesRole = roleFilter === "all" || u.role === roleFilter;
+      return matchesSearch && matchesRole;
+    });
+  }, [users, searchQuery, roleFilter]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const currentUsers = useMemo(() => {
     const start = (currentPage - 1) * PAGE_SIZE;
-    return users.slice(start, start + PAGE_SIZE);
-  }, [users, currentPage]);
+    return filtered.slice(start, start + PAGE_SIZE);
+  }, [filtered, currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, roleFilter]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) setCurrentPage(totalPages);
+  }, [totalPages, currentPage]);
 
   const onEditUser = (user) => {
     setSelectedUser(user);
@@ -55,8 +79,19 @@ export default function UsersScreen() {
     <View style={theme.container}>
       <>
         <ScrollView style={styles.scroll}>
+          {/* <UserTable
+            users={currentUsers}
+            onEditUser={onEditUser}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            roleFilter={roleFilter}
+            onRoleChange={setRoleFilter}
+            loading={loading}
+          /> */}
           <UserTable
             users={currentUsers}
+            totalCount={users.length}
+            filteredCount={filtered.length}
             onEditUser={onEditUser}
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}

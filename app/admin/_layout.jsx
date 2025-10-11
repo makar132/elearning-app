@@ -1,23 +1,15 @@
-import { fill } from "@cloudinary/url-gen/actions/resize";
 import { useRouter } from "expo-router";
 import { Drawer } from "expo-router/drawer";
 import { useEffect } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import { Button } from "react-native-paper";
 import { useAuth } from "../../src/context/AuthContext";
-import { cld } from "../../src/services/cloudinaryClient";
 import theme, { Colors, Typography } from "../../src/styles/theme";
 const publicId = "samples/cloudinary-icon.png";
-
-const testUrl = cld
-  .image(publicId) // built-in public asset
-  .resize(fill().width(200).height(100))
-  .toURL();
 
 export default function AdminLayout() {
   const { user, isLoading, logout } = useAuth();
   const router = useRouter();
-  console.log("testUrl: ", testUrl);
 
   useEffect(() => {
     if (!isLoading) {

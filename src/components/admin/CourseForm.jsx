@@ -1,4 +1,5 @@
 import { Formik } from "formik";
+import { useCallback, useRef } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import {
   Button,
@@ -9,6 +10,8 @@ import {
   TextInput,
 } from "react-native-paper";
 import * as Yup from "yup";
+import ImageUploadField from "./ImageUploadField";
+import LessonsEditor from "./LessonsEditor";
 
 // Validation schema
 const CourseSchema = Yup.object().shape({
@@ -18,8 +21,25 @@ const CourseSchema = Yup.object().shape({
     .min(3, "Too short"),
   email: Yup.string().required("Email is required").email("Invalid email"),
   category: Yup.string().required("Category is required"),
-  price: Yup.number().required("Price is required").min(0, "Invalid price"),
-  imageUrl: Yup.string().required("Image URL is required").url("Invalid URL"),
+
+  price: Yup.number()
+    .typeError("Price must be a number")
+    .min(0)
+    .required("Price is required"),
+  image: Yup.object({ url: Yup.string().url().required() }).required(
+    "Course image is required"
+  ),
+  lessons: Yup.array()
+    .of(
+      Yup.object({
+        id: Yup.string().required(),
+        title: Yup.string().required("Lesson title is required"),
+        url: Yup.string().url().required("Upload each lesson file"),
+        publicId: Yup.string().required(),
+        order: Yup.number().required(),
+      })
+    )
+    .min(0),
 });
 
 // Predefined categories
@@ -40,6 +60,42 @@ export default function CourseForm({
   onCancel,
   loading,
 }) {
+  // Remove only undefined keys (keeps null/0/false)
+  const compact = (obj) => {
+    const out = {};
+    Object.entries(obj || {}).forEach(([k, v]) => {
+      if (v !== undefined) out[k] = v;
+    });
+    return out;
+  };
+
+  // Build a clean lesson object that Firestore will accept
+  const toCleanLesson = (l, i) =>
+    compact({
+      id: l.id,
+      title: l.title,
+      publicId: l.publicId,
+      url: l.url,
+      type: l.type,
+      format: l.format,
+      bytes: l.bytes,
+      duration: l.duration,
+      width: l.width,
+      height: l.height,
+      thumbnailUrl: l.thumbnailUrl,
+      order: i,
+      isPreview: l.isPreview ? true : undefined, // omit if false/undefined
+    });
+
+  const formikRef = useRef(null);
+
+  // Always resolve updates against the *current* Formik values (prevents stale-closure bugs)
+  const handleLessonsChange = useCallback((next) => {
+    const curr = formikRef.current?.values?.lessons ?? [];
+    const resolved = typeof next === "function" ? next(curr) : next;
+    formikRef.current?.setFieldValue("lessons", resolved);
+  }, []);
+
   return (
     <View style={styles.container}>
       <ScrollView
@@ -54,20 +110,52 @@ export default function CourseForm({
           />
           <Card.Content style={styles.cardContent}>
             <Formik
+              innerRef={formikRef}
               initialValues={{
                 title: initialValues?.title || "",
                 instructor: initialValues?.instructor || "",
                 email: initialValues?.email || "",
                 category: initialValues?.category || "",
                 price: initialValues?.price ? String(initialValues.price) : "",
-                imageUrl: initialValues?.imageUrl || "",
+                // imageUrl: initialValues?.imageUrl || "",
+                image: initialValues?.imageUrl
+                  ? {
+                      url: initialValues.imageUrl,
+                      publicId: initialValues.imagePublicId,
+                    }
+                  : null,
+                lessons: initialValues?.lessons || [],
               }}
               validationSchema={CourseSchema}
+              // onSubmit={(values) => {
+              //   const payload = {
+              //     title: values.title,
+              //     instructor: values.instructor,
+              //     email: values.email,
+              //     category: values.category,
+              //     price: Number(values.price),
+              //     imageUrl: values.image?.url || "",
+              //     imagePublicId: values.image?.publicId,
+              //     lessons: (values.lessons || []).map((l, i) => ({
+              //       ...l,
+              //       order: i,
+              //     })),
+              //   };
+              //   onSubmit(payload);
+              // }}
               onSubmit={(values) => {
-                onSubmit({
-                  ...values,
-                  price: Number(values.price),
-                });
+                const payload = {
+                  title: values.title,
+                  instructor: values.instructor,
+                  email: (values.email || "").toLowerCase(),
+                  category: values.category,
+                  price: Number(values.price) || 0,
+                  imageUrl: values.image?.url || "",
+                  imagePublicId: values.image?.publicId ?? null, // never undefined
+                  lessons: (values.lessons || []).map(toCleanLesson),
+                };
+                // Final pass to drop any stray undefined at the top level (defensive)
+                onSubmit(compact(payload));
               }}
             >
               {({
@@ -81,6 +169,13 @@ export default function CourseForm({
                 isSubmitting,
               }) => (
                 <>
+                  <ImageUploadField
+                    value={values.image}
+                    onChange={(img) => setFieldValue("image", img)}
+                    error={errors.image}
+                    touched={touched.image}
+                  />
+
                   {/* Title Field */}
                   <View style={styles.fieldContainer}>
                     <TextInput
@@ -215,7 +310,7 @@ export default function CourseForm({
                   </View>
 
                   {/* Image URL Field */}
-                  <View style={styles.fieldContainer}>
+                  {/* <View style={styles.fieldContainer}>
                     <TextInput
                       label="Course Image URL"
                       value={values.imageUrl}
@@ -238,7 +333,12 @@ export default function CourseForm({
                     >
                       {errors.imageUrl}
                     </HelperText>
-                  </View>
+                  </View> */}
+
+                  <LessonsEditor
+                    value={values.lessons}
+                    onChange={handleLessonsChange}
+                  />
 
                   {/* Action Buttons */}
                   <View style={styles.buttonContainer}>
@@ -262,6 +362,16 @@ export default function CourseForm({
                       {initialValues?.id ? "Update Course" : "Create Course"}
                     </Button>
                   </View>
+
+                  {/* <LessonsEditor
+                    value={values.lessons}
+                    onChange={(next) =>
+                      setFieldValue(
+                        "lessons",
+                        typeof next === "function" ? next(values.lessons) : next
+                      )
+                    }
+                  /> */}
                 </>
               )}
             </Formik>

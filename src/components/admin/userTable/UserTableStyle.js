@@ -29,6 +29,11 @@ export default StyleSheet.create({
     margin: 16,
     backgroundColor: "#F9FAFB",
     elevation: 0,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    color: "#333333",
   },
   searchInput: {
     color: "#333333",
@@ -40,6 +45,7 @@ export default StyleSheet.create({
   },
   filterButton: {
     borderColor: "#E0E0E0",
+    color: "#333333",
   },
   table: {
     minWidth: "100%",
@@ -54,8 +60,12 @@ export default StyleSheet.create({
   },
   nameColumn: { flex: 2 },
   roleColumn: { flex: 1 },
-  statsColumn: { flex: 0.5 },
-  actionColumn: { flex: 0.5 },
+  statsColumn: {
+    flex: 1, marginRight: 16,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  actionColumn: { flex: 1, marginLeft: 8 },
   row: {
     borderBottomWidth: 1,
     borderBottomColor: "#F0F0F0",

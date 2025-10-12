@@ -12,7 +12,7 @@ function CourseSubmitBar({ onCancel, onSubmit, loading, disabled }) {
         marginTop: 16,
       }}
     >
-      <Button onPress={onCancel} disabled={loading}>
+      <Button onPress={onCancel} disabled={loading} textColor="#000" style={{backgroundColor: "#fec1c1"}}>
         Cancel
       </Button>
       <Button

@@ -52,6 +52,7 @@ export default function UserTable({
                 icon="filter"
                 disabled={loading}
                 style={styles.filterButton}
+                textColor="#746AEB"
               >
                 {roleFilter === "all"
                   ? "All Roles"

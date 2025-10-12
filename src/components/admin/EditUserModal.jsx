@@ -4,6 +4,7 @@ import {
   Button,
   Card,
   Chip,
+  Icon,
   Modal,
   Portal,
   RadioButton,
@@ -13,6 +14,7 @@ import {
 } from "react-native-paper";
 import { adminService } from "../../services/adminService";
 import ConfirmationModal from "../ConfirmationModal";
+
 
 export default function EditUserModal({
   visible,
@@ -102,24 +104,39 @@ export default function EditUserModal({
           <Card.Content>
             {/* User Stats */}
             <View style={styles.statsContainer}>
-              <Chip icon="book" compact mode="outlined" style={styles.statChip}>
-                {(user.joinedCourses?.length || 0)} Courses
-              </Chip>
               <Chip
-                icon="heart"
+                icon={
+                  ()=><Icon source="book" size={16}   color="#746AEB" />
+                }
                 compact
                 mode="outlined"
                 style={styles.statChip}
+                textStyle={styles.statChipText}
+                
               >
-                {(user.favorites?.length || 0)} Favorites
+                {user.joinedCourses?.length || 0} Courses
               </Chip>
               <Chip
-                icon="bookmark"
+                icon={
+                  ()=><Icon source="heart" size={16}   color="#746AEB" />
+                }
+                compact
+                mode="outlined"
+                style={[styles.statChip]}
+                textStyle={styles.statChipText}
+              >
+                {user.favorites?.length || 0} Favorites
+              </Chip>
+              <Chip
+                icon={
+                  ()=><Icon source="cart" size={16}   color="#746AEB" />
+                }
                 compact
                 mode="outlined"
                 style={styles.statChip}
+                textStyle={styles.statChipText}
               >
-                {(user.wishlist?.length || 0)} Wishlist
+                {user.wishlist?.length || 0} Wishlist
               </Chip>
             </View>
 
@@ -133,8 +150,9 @@ export default function EditUserModal({
               mode="outlined"
               style={styles.input}
               disabled={loading}
-              outlineColor="#E0E0E0"
+              outlineColor="#333"
               activeOutlineColor="#2196F3"
+              textColor="#333"
             />
 
             <TextInput
@@ -150,6 +168,7 @@ export default function EditUserModal({
               disabled={loading}
               outlineColor="#E0E0E0"
               activeOutlineColor="#2196F3"
+              textColor="#333"
             />
 
             {/* Role Selection */}
@@ -268,6 +287,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#F9FAFB",
     borderColor: "#E0E0E0",
   },
+  statChipText: {
+    color: "#333333",
+  },
   input: {
     marginBottom: 16,
     backgroundColor: "#FFFFFF",
@@ -303,7 +325,9 @@ const styles = StyleSheet.create({
     borderColor: "#F44336",
   },
   cancelButton: {
+    backgroundColor: "#999",
     borderColor: "#E0E0E0",
+
   },
   saveButton: {
     backgroundColor: "#2196F3",

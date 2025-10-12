@@ -40,12 +40,13 @@ export default function LessonsEditor({
   );
 
   return (
-    <Card style={{ marginTop: 16 }}>
+    <Card style={{ marginTop: 16,backgroundColor: "#EDEDED" }}>
       <Card.Title
         title={label}
-        right={() => <Button onPress={addLessonFromPicker}>Add</Button>}
+        titleStyle={{ color: "#555" }}
+        right={() => <Button onPress={addLessonFromPicker} textColor="#555">Add</Button>}
       />
-      <Card.Content>
+      <Card.Content >
         {sorted.length === 0 ? (
           <View style={{ paddingVertical: 8 }}>
             <Text style={{ opacity: 0.6 }}>

@@ -22,7 +22,7 @@ export function Header({ title = "Page", showBack = true }) {
               const result = await logout();
               console.log("Logout result:", result);
               
-              // Navigate regardless of result to ensure logout
+              // logout
               router.replace("/auth");
             } catch (error) {
               console.error("Logout error:", error);

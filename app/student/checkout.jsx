@@ -2,97 +2,92 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, StatusBar, Text, TouchableOpacity, View } from 'react-native';
-import { useAuth } from '../../src/context/AuthContext';
 import { useCart } from '../../src/context/CartContext';
 import styles from '../../src/utils/Checkout.styles';
-
-import CheckoutHeader from '../../src/components/checkout/CheckoutHeader';
+import { CheckoutHeader, EmptyStateNoButton } from '../../src/components/checkout/CheckoutHeader';
 import ConfirmationModals from '../../src/components/checkout/ConfirmationModals';
 import CourseList from '../../src/components/checkout/CourseList';
 
 export default function CheckoutScreen() {
-  const router = useRouter();
-  const { user } = useAuth();
-  const { enrolledCourses, unenrollFromCourse, clearEnrolledCourses } = useCart();
-  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [processing, setProcessing] = useState(false);
+  const router = useRouter(); 
+  const { enrolledCourses, unenrollFromCourse, clearEnrolledCourses, getTotalPrice } = useCart(); 
+  
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null); // Store course ID to confirm removal
+  const [showSuccessModal, setShowSuccessModal] = useState(false); // Control success checkout modal
+  const [processing, setProcessing] = useState(false); 
+  const totalPrice = getTotalPrice(); // Calc price
 
-  const totalPrice = enrolledCourses.reduce((sum, course) => sum + (parseFloat(course.price) || 0), 0);
+  const handleRemoveCourse = (courseId) => setConfirmDeleteId(courseId); //  delete confirmation
 
-  const handleRemoveCourse = (courseId) => setConfirmDeleteId(courseId);
   const confirmRemove = () => {
-    unenrollFromCourse(confirmDeleteId);
-    setConfirmDeleteId(null);
+    unenrollFromCourse(confirmDeleteId); // Remove course from cart
+    setConfirmDeleteId(null); // Close confirmation modal
   };
 
   const handleCheckout = () => {
-    if (!enrolledCourses.length) return;
-    setShowSuccessModal(true);
+    if (!enrolledCourses.length) return; 
+    setShowSuccessModal(true); // Show success modal
   };
 
   const handleConfirmCheckout = () => {
-    if (!enrolledCourses.length) return setShowSuccessModal(false);
+    if (!enrolledCourses.length) return setShowSuccessModal(false); 
 
-    setProcessing(true);
+    setProcessing(true); 
     setTimeout(() => {
-      clearEnrolledCourses();
-      setProcessing(false);
+      clearEnrolledCourses(); 
+      setProcessing(false); 
       setShowSuccessModal(false);
-      router.push('/student/my-courses');
+      router.push('/student/my-courses'); 
     }, 500);
   };
+ 
+  if (!enrolledCourses.length) return <EmptyStateNoButton 
+    icon="cart-outline" 
+    title="Your cart is empty" 
+    subtitle="Browse courses and add them to checkout"
+  />; 
 
-
-  const EmptyState = ({ icon, title, subtitle, buttonText, onPress }) => (
-    <View style={styles.emptyContainer}>
-      <Ionicons name={icon} size={80} color="#E5E7EB" />
-      <Text style={styles.emptyTitle}>{title}</Text>
-      <Text style={styles.emptySubtitle}>{subtitle}</Text>
-      <TouchableOpacity style={styles.primaryButton} onPress={onPress}>
-        <Text style={styles.primaryButtonText}>{buttonText}</Text>
-      </TouchableOpacity>
-    </View>
-  );
-
-  if (!user) return <EmptyState icon="person-circle-outline" title="Login Required" subtitle="Please login to view checkout" buttonText="Go to Login" 
-  onPress={() => router.push('/auth')} />;
-
-  if (!enrolledCourses.length) return <EmptyState icon="cart-outline" title="Your cart is empty" subtitle="Browse courses and add them to checkout" buttonText="Browse Courses"
-  onPress={() => router.push('/student/dashboard')} />;
-
-  // 
   return (
     <View style={{ flex: 1, backgroundColor: '#F9FAFB' }}>
       <StatusBar barStyle="dark-content" backgroundColor="#F9FAFB" />
-      <CheckoutHeader itemCount={enrolledCourses.length} onClearAll={() => setConfirmDeleteId('all')} />
+      <CheckoutHeader itemCount={enrolledCourses.length} /> 
 
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 250 }} showsVerticalScrollIndicator={false}>
-        <CourseList enrolledCourses={enrolledCourses} totalPrice={totalPrice} handleRemoveCourse={handleRemoveCourse} />
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingBottom: 250}}
+        showsVerticalScrollIndicator={false}
+      >
+        <CourseList
+          enrolledCourses={enrolledCourses} 
+          totalPrice={totalPrice} 
+          handleRemoveCourse={handleRemoveCourse} // remove course
+        />
       </ScrollView>
 
-      <View style={[styles.footer, { bottom: 100}]}>
+      <View style={styles.footer}>
         <View style={styles.totalContainer}>
           <Text style={styles.footerLabel}>Total Amount</Text>
-          <Text style={styles.footerTotal}>${totalPrice.toFixed(2)}</Text>
+          <Text style={styles.footerTotal}>${totalPrice.toFixed(2)}</Text> 
         </View>
-        <TouchableOpacity style={styles.checkoutButton} onPress={handleCheckout} disabled={processing}>
+        <TouchableOpacity
+          style={styles.checkoutButton}
+          onPress={handleCheckout} 
+          disabled={processing} 
+        >
           <Text style={styles.checkoutButtonText}>Proceed to Checkout</Text>
           <Ionicons name="arrow-forward" size={20} color="#fff" />
         </TouchableOpacity>
       </View>
 
       <ConfirmationModals
-        confirmDeleteId={confirmDeleteId}
-        setConfirmDeleteId={setConfirmDeleteId}
-        confirmRemove={confirmRemove}
-        clearEnrolledCourses={clearEnrolledCourses}
-        showSuccessModal={showSuccessModal}
+        confirmDeleteId={confirmDeleteId} 
+        setConfirmDeleteId={setConfirmDeleteId} 
+        confirmRemove={confirmRemove} // confirm deletion
+        clearEnrolledCourses={clearEnrolledCourses} //  clear cart
+        showSuccessModal={showSuccessModal} // Control checkout success modal
         setShowSuccessModal={setShowSuccessModal}
-        processing={processing}
-        handleConfirmCheckout={handleConfirmCheckout}
-        enrolledCourses={enrolledCourses}
-        totalPrice={totalPrice}
+        processing={processing} 
+        handleConfirmCheckout={handleConfirmCheckout} // Confirm checkout action
       />
     </View>
   );

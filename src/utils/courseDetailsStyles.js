@@ -1,6 +1,5 @@
 import { StyleSheet, Dimensions } from 'react-native';
 const { width } = Dimensions.get('window');
-
 export const courseDetailsStyles = StyleSheet.create({
   container: {
     flex: 1,
@@ -189,7 +188,7 @@ export const courseDetailsStyles = StyleSheet.create({
     fontSize: 16,
     letterSpacing: 0.5,
   },
-  // ✅ Modal Styles
+  //  Modal Styles
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -250,7 +249,7 @@ export const courseDetailsStyles = StyleSheet.create({
   },
 });
 
-// ==== Overview Tab Styles ====
+// Overview Tab Styles 
 export const overviewTabStyles = StyleSheet.create({
   container: {
     padding: 20,
@@ -350,7 +349,7 @@ export const overviewTabStyles = StyleSheet.create({
   },
 });
 
-// ==== Instructor Tab Styles ====
+//Instructor Tab Styles
 export const instructorTabStyles = StyleSheet.create({
   container: {
     padding: 20,
@@ -407,7 +406,7 @@ export const instructorTabStyles = StyleSheet.create({
   },
 });
 
-// ==== Reviews Tab Styles ====
+//  Reviews Tab Styles
 export const reviewsTabStyles = StyleSheet.create({
   container: {
     padding: 20,

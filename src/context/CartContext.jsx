@@ -1,27 +1,23 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Create the Context
 const CartContext = createContext();
 const CART_STORAGE_KEY = '@cart_courses';
 
 export const CartProvider = ({ children }) => {
-  // Courses in the cart
   const [enrolledCourses, setEnrolledCourses] = useState([]);
 
-  // Load cart when app starts
   useEffect(() => {
     loadCart();
   }, []);
 
-  // Save cart whenever it changes
   useEffect(() => {
     if (enrolledCourses.length >= 0) {
       saveCart();
     }
   }, [enrolledCourses]);
 
-  // Load cart from storage
+  // Load from storage
   const loadCart = async () => {
     try {
       const saved = await AsyncStorage.getItem(CART_STORAGE_KEY);
@@ -31,7 +27,7 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // Save cart to storage
+  // Save to storage
   const saveCart = async () => {
     try {
       await AsyncStorage.setItem(CART_STORAGE_KEY, JSON.stringify(enrolledCourses));
@@ -40,47 +36,46 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // Check if course is already in cart
+  // Check in cart
   const isEnrolled = (courseId) => {
-    return enrolledCourses.some(course => course.id == courseId);
+    return enrolledCourses.some(course => course.id === courseId);
   };
 
-  // Add course to cart
+  // Add course
   const enrollInCourse = (courseId, courseData) => {
-    if (isEnrolled(courseId)) return false; // Don't add if already exists
+    if (isEnrolled(courseId)) return false;
     setEnrolledCourses(prev => [...prev, { id: courseId, ...courseData }]);
     return true;
   };
 
-  // Remove course from cart
+  // Remove course
   const unenrollFromCourse = (courseId) => {
-    setEnrolledCourses(prev => prev.filter(c => c.id != courseId));
+    setEnrolledCourses(prev => prev.filter(c => c.id !== courseId));
   };
 
-  // Clear all courses from cart
+  // Clear all courses
   const clearEnrolledCourses = () => {
     setEnrolledCourses([]);
   };
 
-  //  total price 
+  // Calculate total price
   const getTotalPrice = () => {
     return enrolledCourses.reduce((total, course) => total + (parseFloat(course.price) || 0), 0);
   };
 
   return (
     <CartContext.Provider value={{
-      enrolledCourses,        // List of courses
-      isEnrolled,             // Check function
-      enrollInCourse,         // Add function
-      unenrollFromCourse,     // Remove function
-      clearEnrolledCourses,   // Clear function
-      getTotalPrice,          // Calculate total function
-      checkoutCount: enrolledCourses.length  // Number of courses
+      enrolledCourses,
+      isEnrolled,
+      enrollInCourse,
+      unenrollFromCourse,
+      clearEnrolledCourses,
+      getTotalPrice,
+      checkoutCount: enrolledCourses.length
     }}>
       {children}
     </CartContext.Provider>
   );
 };
 
-// Hook to use Cart anywhere
 export const useCart = () => useContext(CartContext);

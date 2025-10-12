@@ -23,8 +23,7 @@ export default function InstructorInfoTab({ instructorData, courseData }) {
         <View style={styles.infoContainer}>
           <Text style={styles.name}>{instructorName}</Text>
           <Text style={styles.bioText} numberOfLines={3}>{instructorBio}</Text>
-          
-          {instructorEmail && (
+            {instructorEmail && (
             <TouchableOpacity 
               onPress={handleEmailPress} 
               style={styles.emailContainer}

@@ -5,8 +5,6 @@ import styles from '../../utils/Checkout.styles';
 
 export default function CourseList({ enrolledCourses, totalPrice, handleRemoveCourse }) {
   return (
-
-    
     <ScrollView 
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 20, paddingTop: 8 }}
@@ -41,11 +39,6 @@ export default function CourseList({ enrolledCourses, totalPrice, handleRemoveCo
         <View style={styles.summaryRow}>
           <Text style={styles.summaryLabel}>Subtotal</Text>
           <Text style={styles.summaryValue}>${totalPrice.toFixed(2)}</Text>
-        </View>
-
-        <View style={styles.summaryRow}>
-          <Text style={styles.summaryLabel}>Discount</Text>
-          <Text style={[styles.summaryValue, { color: '#059669' }]}>-$0.00</Text>
         </View>
 
         <View style={styles.divider} />

@@ -1,35 +1,22 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { View, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { overviewTabStyles as styles } from '../../utils/courseDetailsStyles';
 
 export default function CourseOverviewTab({ courseData }) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  
-  // Default values for missing data
+  // Default values
   const totalLessons = courseData.totalLessons || 100;
   const duration = courseData.duration || '7 Weeks';
   const certificate = courseData.certificate !== false; // true by default
   const discount = courseData.discount || '20';
-  const skills = courseData.skills || []; // Only show if exists in Firebase
+  const skills = courseData.skills || []; //show if in Firebase
 
   const description = courseData.description || 'No description available';
-  const shouldShowReadMore = description.length > 150;
-  const displayedDescription = isExpanded || !shouldShowReadMore
-    ? description
-    : description.substring(0, 150) + '...';
 
   return (
     <View style={styles.container}>
       {/* Description */}
-      <Text style={styles.description}>{displayedDescription}</Text>
-      {shouldShowReadMore && (
-        <TouchableOpacity onPress={() => setIsExpanded(!isExpanded)}>
-          <Text style={styles.readMoreText}>
-            {isExpanded ? 'Read Less' : 'Read More'}
-          </Text>
-        </TouchableOpacity>
-      )}
+      <Text style={styles.description}>{description}</Text>
 
       {/* Info Cards Grid */}
       <View style={styles.infoGrid}>
@@ -74,7 +61,7 @@ export default function CourseOverviewTab({ courseData }) {
         </View>
       </View>
 
-      {/* Skills Section - Only show if skills exist */}
+      {/* Skills Section  */}
       {skills && skills.length > 0 && (
         <View style={styles.skillsSection}>
           <Text style={styles.sectionTitle}>Skills</Text>

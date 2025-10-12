@@ -69,7 +69,7 @@ export default function CourseForm({
 
   return (
     <ScrollView contentContainerStyle={{ padding: 16 }}>
-      <Card style={{ padding: 12 }}>
+      <Card style={{ padding: 12  , marginBottom: 16 , borderRadius: 8 , elevation: 4 , shadowColor: "#000" , shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2 , backgroundColor: "#fff" }}>
         <Formik
           innerRef={formikRef}
           initialValues={{

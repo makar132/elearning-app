@@ -2,11 +2,11 @@ import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
 import {
-    Button,
-    Card,
-    HelperText,
-    ProgressBar,
-    Text,
+  Button,
+  Card,
+  HelperText,
+  ProgressBar,
+  Text,
 } from "react-native-paper";
 import { makeImageThumb } from "../../services/cloudinaryHelpers";
 import { uploadToCloudinary } from "../../services/cloudinaryUpload";
@@ -52,7 +52,7 @@ export default function ImageUploadField({
 
   return (
     <Card style={styles.card}>
-      <Card.Title title={label} />
+      <Card.Title title={label} style={{ marginBottom: 8  }} titleStyle={{ fontSize: 16 , color: "#555" }} />
       <Card.Content>
         {value?.url ? (
           <Image source={{ uri: value.url }} style={styles.image} />
@@ -82,7 +82,7 @@ export default function ImageUploadField({
 }
 
 const styles = StyleSheet.create({
-  card: { marginBottom: 16 },
+  card: { marginBottom: 16 ,backgroundColor: "#f5f5f5"},
   image: { width: "100%", height: 180, borderRadius: 12 },
   placeholder: {
     height: 180,

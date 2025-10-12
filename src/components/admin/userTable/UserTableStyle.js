@@ -29,6 +29,11 @@ export default StyleSheet.create({
     margin: 16,
     backgroundColor: "#F9FAFB",
     elevation: 0,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    color: "#333333",
   },
   searchInput: {
     color: "#333333",
@@ -40,6 +45,7 @@ export default StyleSheet.create({
   },
   filterButton: {
     borderColor: "#E0E0E0",
+    color: "#333333",
   },
   table: {
     minWidth: "100%",

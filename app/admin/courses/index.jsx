@@ -49,14 +49,14 @@ export default function CoursesScreen() {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
         >
-          <View style={styles.header}>
+          {/* <View style={styles.header}>
             <Text variant="headlineLarge" style={styles.title}>
               Courses
             </Text>
             <Text variant="bodyMedium" style={styles.subtitle}>
               {filtered.length} of {courses.length} courses
             </Text>
-          </View>
+          </View> */}
 
           <CourseTable
             courses={currentCourses}

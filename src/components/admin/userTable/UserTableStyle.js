@@ -60,8 +60,12 @@ export default StyleSheet.create({
   },
   nameColumn: { flex: 2 },
   roleColumn: { flex: 1 },
-  statsColumn: { flex: 0.5 },
-  actionColumn: { flex: 0.5 },
+  statsColumn: {
+    flex: 1, marginRight: 16,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  actionColumn: { flex: 1, marginLeft: 8 },
   row: {
     borderBottomWidth: 1,
     borderBottomColor: "#F0F0F0",

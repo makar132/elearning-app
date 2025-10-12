@@ -13,6 +13,45 @@ export const MyCoursesStyles = StyleSheet.create({
   navItem: { flex: 1, alignItems: 'center', paddingVertical: 8 },
 
 
+  priceFilterBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    marginBottom: 10,
+    marginHorizontal: 20,
+  },
+  priceContainer: {
+    backgroundColor: "white",
+    padding: 10,
+    borderRadius: 12,
+    alignItems: "flex-end",
+    marginVertical: 10,
+  },
+  priceButton: {
+    borderRadius: 8,
+  },
+  priceButtonText: {
+    color: "white",
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+  priceSliderContainer: {
+    marginTop: 15,
+    alignItems: "center",
+    position: "relative"
+  },
+  priceRangeText: {
+    color: "#1E40AF",
+    fontWeight: "600",
+    marginBottom: 10,
+  },
+  priceClearFilter: {
+    position: "absolute",
+    color: "#ccc",
+    top: -50,
+    left: -10,
+    zIndex: 10,
+  },
   searchInput: {
     height: 50,
     borderColor: '#ccc',

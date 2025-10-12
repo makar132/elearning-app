@@ -12,20 +12,30 @@ import {
 } from "react-native";
 import { useAuth } from "../../context/AuthContext";
 import styles from "../../utils/BottomNav.styles";
+// Theme
+import { useDispatch, useSelector } from "react-redux";
+import { toggleTheme } from "../../redux/themeSlice";
+
+
 
 const { width } = Dimensions.get("window");
 const SIDEBAR_WIDTH = width * 0.55;
 
 const ProfileSidebar = ({ visible, toggleSidebar, handleLogout, menuItems = [], checkoutCount = 0 }) => {
   const { user } = useAuth();
-
+  // Theme
+  const dispatch = useDispatch();
+  const theme = useSelector((state) => state.theme.theme);
+  const changeTheme = () => {
+    dispatch(toggleTheme());
+  }
   return (
     <Modal visible={visible} transparent animationType="none" onRequestClose={toggleSidebar} statusBarTranslucent>
       <StatusBar backgroundColor="rgba(0,0,0,0.3)" barStyle="dark-content" />
 
       <TouchableOpacity style={styles.overlay} activeOpacity={1} onPress={toggleSidebar}>
         <View style={[styles.sidebar, { width: SIDEBAR_WIDTH, position: 'absolute', right: 0 }]}>
-          
+
           {/* Header */}
           <View style={styles.sidebarHeader}>
             <TouchableOpacity style={styles.closeButton} onPress={toggleSidebar}>
@@ -82,7 +92,29 @@ const ProfileSidebar = ({ visible, toggleSidebar, handleLogout, menuItems = [], 
                   <Text style={styles.menuItemText}>Checkout</Text>
                 </View>
               </TouchableOpacity>
+              {/* Theme */}
+              <TouchableOpacity
+                onPress={() => changeTheme()}
+                style={styles.menuItem}
+                activeOpacity={0.7}
+              >
+                <View style={styles.menuItemContent}>
+                  <View style={styles.menuIconContainer}>
+                    <Ionicons
+                      name={theme === "dark" ? "sunny-outline" : "moon-outline"}
+                      size={22}
+                      color="#1E40AF"
+                    />
+                  </View>
+                  <Text style={styles.menuItemText}> {theme}
+                    {theme === "dark" ? "Light Mode" : "Dark Mode"}
+                  </Text>
+                </View>
+              </TouchableOpacity>
             </ScrollView>
+
+
+
 
             {/* Logout */}
             <View style={styles.logoutContainer}>

@@ -9,7 +9,6 @@ import CourseMediaFields from "./CourseMediaFields";
 import CourseSubmitBar from "./CourseSubmitBar";
 import LessonsEditor from "./LessonsEditor";
 
-// Remove only undefined (keep null/0/false)
 const compact = (obj = {}) =>
   Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined));
 
@@ -125,77 +124,3 @@ export default function CourseForm({
   );
 }
 
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: "#F9FAFB",
-//   },
-//   scrollView: {
-//     flex: 1,
-//   },
-//   card: {
-//     margin: 16,
-//     backgroundColor: "#FFFFFF",
-//     elevation: 2,
-//     shadowColor: "#000",
-//     shadowOffset: { width: 0, height: 1 },
-//     shadowOpacity: 0.1,
-//     shadowRadius: 2,
-//   },
-//   cardTitle: {
-//     color: "#333333",
-//     fontWeight: "600",
-//   },
-//   cardContent: {
-//     paddingTop: 0,
-//   },
-//   fieldContainer: {
-//     marginBottom: 8,
-//   },
-//   input: {
-//     backgroundColor: "#FFFFFF",
-//     marginBottom: 4,
-//   },
-//   helperText: {
-//     marginBottom: 8,
-//   },
-//   sectionLabel: {
-//     fontSize: 16,
-//     fontWeight: "600",
-//     color: "#333333",
-//     marginBottom: 12,
-//     marginTop: 8,
-//   },
-//   categoriesContainer: {
-//     flexDirection: "row",
-//     flexWrap: "wrap",
-//     gap: 8,
-//     marginBottom: 4,
-//   },
-//   categoryChip: {
-//     marginBottom: 8,
-//     backgroundColor: "#FFFFFF",
-//     borderColor: "#E0E0E0",
-//   },
-//   selectedChip: {
-//     backgroundColor: "#2196F3",
-//     borderColor: "#2196F3",
-//   },
-//   buttonContainer: {
-//     flexDirection: "row",
-//     justifyContent: "space-between",
-//     marginTop: 24,
-//     gap: 12,
-//   },
-//   cancelButton: {
-//     flex: 1,
-//     borderColor: "#E0E0E0",
-//   },
-//   submitButton: {
-//     flex: 1,
-//     backgroundColor: "#2196F3",
-//   },
-//   buttonContent: {
-//     paddingVertical: 8,
-//   },
-// });

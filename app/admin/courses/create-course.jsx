@@ -2,7 +2,7 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { FAB, Snackbar } from "react-native-paper";
-import CourseForm from "../../../src/components/admin/CourseForm";
+import CourseForm from "../../../src/components/admin/course/CourseForm";
 import { courseService } from "../../../src/services/courseService";
 import theme, { Colors } from "../../../src/styles/theme";
 

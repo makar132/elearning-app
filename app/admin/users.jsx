@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { ActivityIndicator, FAB, Snackbar, Text } from "react-native-paper";
 import EditUserModal from "../../src/components/admin/EditUserModal";
-import UserTable from "../../src/components/admin/UserTable";
+import UserTable from "../../src/components/admin/userTable/UserTable";
 import Pagination from "../../src/components/Pagination";
 import { useFirestoreCollection } from "../../src/hooks/useFirestoreCollection";
 import theme, { Colors } from "../../src/styles/theme";
@@ -23,12 +23,6 @@ export default function UsersScreen() {
   const { data: users, loading } = useFirestoreCollection("users");
 
   const [currentPage, setCurrentPage] = useState(1);
-
-  // const totalPages = Math.ceil(users.length / PAGE_SIZE);
-  // const currentUsers = useMemo(() => {
-  //   const start = (currentPage - 1) * PAGE_SIZE;
-  //   return users.slice(start, start + PAGE_SIZE);
-  // }, [users, currentPage]);
 
   const filtered = useMemo(() => {
     const q = (searchQuery ?? "").toLowerCase();
@@ -79,15 +73,6 @@ export default function UsersScreen() {
     <View style={theme.container}>
       <>
         <ScrollView style={styles.scroll}>
-          {/* <UserTable
-            users={currentUsers}
-            onEditUser={onEditUser}
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            roleFilter={roleFilter}
-            onRoleChange={setRoleFilter}
-            loading={loading}
-          /> */}
           <UserTable
             users={currentUsers}
             totalCount={users.length}

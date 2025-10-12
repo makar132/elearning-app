@@ -1,7 +1,7 @@
-import React from 'react';
-import { Modal, View, Text, Pressable, ActivityIndicator } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import styles from '../../utils/Checkout.styles';
+import React from "react";
+import { Modal, View, Text, Pressable, ActivityIndicator } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import styles from "../../utils/Checkout.styles";
 
 export default function ConfirmationModals({
   confirmDeleteId,
@@ -12,11 +12,10 @@ export default function ConfirmationModals({
   setShowSuccessModal,
   processing,
   handleConfirmCheckout,
-  enrolledCourses,
-  totalPrice
 }) {
   return (
     <>
+      {/* Delete Modal */}
       <Modal
         visible={confirmDeleteId !== null}
         transparent
@@ -27,13 +26,14 @@ export default function ConfirmationModals({
           <View style={styles.modalContent}>
             <Ionicons name="warning-outline" size={48} color="#DC2626" />
             <Text style={styles.modalTitle}>
-              {confirmDeleteId === 'all' ? 'Remove All Courses?' : 'Remove Course?'}
+              {confirmDeleteId === "all" ? "Remove All?" : "Remove Course?"}
             </Text>
             <Text style={styles.modalText}>
-              {confirmDeleteId === 'all' 
-                ? 'Are you sure you want to remove all courses from checkout?' 
-                : 'Are you sure you want to remove this course from checkout?'}
+              {confirmDeleteId === "all"
+                ? "Remove all courses from cart?"
+                : "Remove this course from cart?"}
             </Text>
+
             <View style={styles.modalButtons}>
               <Pressable
                 style={[styles.modalButton, styles.modalButtonCancel]}
@@ -41,10 +41,11 @@ export default function ConfirmationModals({
               >
                 <Text style={styles.modalButtonTextCancel}>Cancel</Text>
               </Pressable>
+
               <Pressable
                 style={[styles.modalButton, styles.modalButtonConfirm]}
                 onPress={() => {
-                  if (confirmDeleteId === 'all') clearEnrolledCourses();
+                  if (confirmDeleteId === "all") clearEnrolledCourses();
                   else confirmRemove();
                   setConfirmDeleteId(null);
                 }}
@@ -56,36 +57,48 @@ export default function ConfirmationModals({
         </View>
       </Modal>
 
+      {/* Payment Confirmation Modal */}
       <Modal
-        visible={showSuccessModal}
+        visible={showSuccessModal && !processing}
         transparent
         animationType="fade"
-        onRequestClose={() => !processing && setShowSuccessModal(false)}
+        onRequestClose={() => setShowSuccessModal(false)}
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            {processing ? (
-              <>
-                <ActivityIndicator size="large" color="#1E40AF" />
-                <Text style={styles.modalTitle}>Processing...</Text>
-              </>
-            ) : (
-              <>
-                <Ionicons name="checkmark-circle" size={64} color="#059669" />
-                <Text style={styles.modalTitle}>Enrollment Confirmed!</Text>
-                <Text style={styles.modalText}>
-                  You have successfully enrolled in {enrolledCourses.length} course(s) for ${totalPrice.toFixed(2)}
+            <Ionicons name="card-outline" size={64} color="#1E40AF" />
+            <Text style={styles.modalTitle}>Confirm Payment</Text>
+            <Text style={styles.modalText}>
+              Are you sure you want to proceed with the payment?
+            </Text>
+
+            <View style={styles.modalButtons}>
+              <Pressable
+                style={[styles.modalButton, styles.modalButtonCancel]}
+                onPress={() => setShowSuccessModal(false)}
+              >
+                <Text style={styles.modalButtonTextCancel}>Cancel</Text>
+              </Pressable>
+
+              <Pressable
+                style={[styles.modalButton, styles.modalButtonConfirm]}
+                onPress={handleConfirmCheckout}
+              >
+                <Text style={styles.modalButtonTextConfirm}>
+                  Confirm Payment
                 </Text>
-                <View style={styles.modalButtons}>
-                  <Pressable
-                    style={[styles.modalButton, styles.modalButtonConfirm]}
-                    onPress={handleConfirmCheckout}
-                  >
-                    <Text style={styles.modalButtonTextConfirm}>Go to My Courses</Text>
-                  </Pressable>
-                </View>
-              </>
-            )}
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Processing Modal */}
+      <Modal visible={processing} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <ActivityIndicator size="large" color="#1E40AF" />
+            <Text style={styles.modalTitle}>Processing Payment...</Text>
           </View>
         </View>
       </Modal>

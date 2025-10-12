@@ -48,8 +48,7 @@ export const reviewService = {
 
       const reviewsRef = collection(db, 'courses', courseId, 'reviews');
       const { id, createdAt, ...dataToSave } = reviewData;
-      
-      const docRef = await addDoc(reviewsRef, {
+            const docRef = await addDoc(reviewsRef, {
         ...dataToSave,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
@@ -74,7 +73,7 @@ export const reviewService = {
   },
 
   /**
-   * Check if user has already reviewed this course
+   * Check  user  review
    */
   async hasUserReviewed(courseId, userId) {
     try {

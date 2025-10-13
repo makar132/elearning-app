@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import {
   FlatList,
@@ -16,6 +17,7 @@ import { courseService } from "../../src/services/courseService";
 import { MyCoursesStyles as styles } from "../../src/utils/myCoursesStyles";
 
 export default function MyCourses() {
+  const router = useRouter();
   const [searchText, setSearchText] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [priceRange, setPriceRange] = useState([0, 1000]);
@@ -76,6 +78,19 @@ export default function MyCourses() {
     }, 400);
   };
 
+  const handleDetails = (id) => {
+    router.push(`/student/course-details?id=${id}`);
+  };
+
+  const handleEnroll = (id) => {
+    router.push(`/student/course-details?id=${id}`);
+  };
+
+  const handleFavorite = (id) => {
+    console.log("Favorite", id);
+    // هنا تقدر تضيف favorite logic
+  };
+
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -96,9 +111,9 @@ export default function MyCourses() {
         renderItem={({ item }) => (
           <CourseCard
             course={item}
-            onDetails={(id) => console.log("Details", id)}
-            onDashboard={(id) => console.log("Enroll", id)}
-            onFavorites={(id) => console.log("Favorite", id)}
+            onPressDetail={handleDetails}
+            onPressEnroll={handleEnroll}
+            onPressFavorite={handleFavorite}
           />
         )}
         ListHeaderComponent={

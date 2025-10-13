@@ -26,9 +26,9 @@ export default function StudentLayout({ children }) {
 )
         }}
       >
+        <Stack.Screen name="my-courses" />
         <Stack.Screen name="dashboard" />
         <Stack.Screen name="favorites" />
-        <Stack.Screen name="my-courses" />
         <Stack.Screen name="course-details" />
       </Stack>
 

@@ -33,7 +33,7 @@ export default function Index() {
     if (!user) return router.replace("/auth");
     const roleRoutes = {
       admin: "/admin",
-      student: "/student/dashboard",
+      student: "/student/my-courses",
       instructor: "/instructor",
     };
     router.replace(roleRoutes[user.role] || "/student/dashboard");

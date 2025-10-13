@@ -28,11 +28,12 @@ export default function StudentLayout({ children }) {
               </Button>
             )
           }}
+          initialRouteName="my-courses"
         >
-          <Stack.Screen name="my-courses" />
+          <Stack.Screen name="my-courses"  options={{title:"Home"}}/>
           <Stack.Screen name="dashboard" />
           <Stack.Screen name="favorites" />
-          <Stack.Screen name="course-details" />
+          <Stack.Screen name="course-details" options={{title:"Course details"}}/>
         </Stack>
 
         <BottomNav />

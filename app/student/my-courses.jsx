@@ -1,35 +1,43 @@
-// app/student/my-courses.jsx
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { ScrollView, TextInput, TouchableOpacity, View } from "react-native";
-import { Text } from "react-native-paper";
+import {
+  FlatList,
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { ActivityIndicator, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import CourseCard from "../../src/components/CourseCard/CourseCard";
+import InlineExpandableFilter from "../../src/components/FilterPrice";
 import { courseService } from "../../src/services/courseService";
 import { MyCoursesStyles as styles } from "../../src/utils/myCoursesStyles";
 
 export default function MyCourses() {
+  const router = useRouter();
   const [searchText, setSearchText] = useState("");
-   const [selectedCategory, setSelectedCategory] = useState("All");
- const [courses, setCourses] = useState([]);
- const categories = useMemo(
-   () => ["All", ...new Set(courses.map(c => c.category).filter(Boolean))],
-   [courses]
- );
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [priceRange, setPriceRange] = useState([0, 1000]);
+  const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const pageSize = 5;
+
+  const categories = useMemo(
+    () => ["All", ...new Set(courses.map(c => c.category).filter(Boolean))],
+    [courses]
+  );
 
   useEffect(() => {
     const loadCourses = async () => {
       try {
         const fetchedCourses = await courseService.getAllCourses();
-        const sortedCourses = fetchedCourses.sort((a, b) =>
-          (a.titleLower ?? a.title ?? "").localeCompare(
-            b.titleLower ?? b.title ?? ""
-          )
-        );
-        setCourses(sortedCourses);
+        setCourses(fetchedCourses);
       } catch (error) {
         console.log("Error fetching courses:", error);
       } finally {
@@ -40,100 +48,164 @@ export default function MyCourses() {
     loadCourses();
   }, []);
 
+  useEffect(() => {
+    setPage(1);
+    setHasMore(true);
+  }, [searchText, selectedCategory, priceRange]);
+
+  const filteredCourses = courses.filter((course) => {
+    const matchesSearch = course.title
+      .toLowerCase()
+      .includes(searchText.toLowerCase());
+    const matchesCategory =
+      selectedCategory === "All" || course.title.includes(selectedCategory);
+    const matchesPrice =
+      course.price >= priceRange[0] && course.price <= priceRange[1];
+    return matchesSearch && matchesCategory && matchesPrice;
+  });
+
+  const displayedCourses = filteredCourses.slice(0, page * pageSize);
+
+  const loadMoreCourses = () => {
+    if (loadingMore || !hasMore) return;
+    setLoadingMore(true);
+    setTimeout(() => {
+      const nextPage = page + 1;
+      const newDisplayed = filteredCourses.slice(0, nextPage * pageSize);
+      if (newDisplayed.length === displayedCourses.length) setHasMore(false);
+      setPage(nextPage);
+      setLoadingMore(false);
+    }, 400);
+  };
+
+  const handleDetails = (id) => {
+    router.push(`/student/course-details?id=${id}`);
+  };
+
+  const handleEnroll = (id) => {
+    router.push(`/student/course-details?id=${id}`);
+  };
+
+  const handleFavorite = (id) => {
+    console.log("Favorite", id);
+    // هنا تقدر تضيف favorite logic
+  };
+
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>Loading courses...</Text>
+        <ActivityIndicator
+          size="small"
+          color="#1E40AF"
+          style={{ marginVertical: 20 }}
+        />
       </View>
     );
   }
 
-  const filteredCourses = courses.filter((course) => {
-    const q = (searchText ?? "").trim().toLowerCase();
-    const titleL = (course.titleLower ?? course.title ?? "")
-      .toString()
-      .toLowerCase();
-    const categoryL = (course.categoryLower ?? course.category ?? "")
-      .toString()
-      .toLowerCase();
-
-    const matchesSearch =
-      q.length === 0 || titleL.includes(q) || categoryL.includes(q);
-    const matchesCategory =
-      selectedCategory === "All" ||
-      (course.categoryLower ?? course.category ?? "")
-        .toString()
-        .toLowerCase() === selectedCategory.toLowerCase();
-    return matchesSearch && matchesCategory;
-  });
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        <Text style={styles.pageTitle}>My Courses</Text>
-        <Text style={styles.pageSubtitle}>
-          {filteredCourses.length} Course{filteredCourses.length > 1 ? "s" : ""}{" "}
-          Enrolled
-        </Text>
+      <FlatList
+        data={displayedCourses}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <CourseCard
+            course={item}
+            onPressDetail={handleDetails}
+            onPressEnroll={handleEnroll}
+            onPressFavorite={handleFavorite}
+          />
+        )}
+        ListHeaderComponent={
+          <View>
+            <Text style={styles.pageTitle}>All Courses</Text>
+            <Text style={styles.pageSubtitle}>
+              {filteredCourses.length} Course
+              {filteredCourses.length > 1 ? "s" : ""}
+            </Text>
 
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search courses..."
-          value={searchText}
-          onChangeText={setSearchText}
-        />
+            <View style={{ position: "relative" }}>
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Search courses..."
+                value={searchText}
+                onChangeText={setSearchText}
+              />
 
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.categoryScroll}
-        >
-          {categories.map((cat, index) => (
-            <TouchableOpacity
-              key={index}
-              style={[
-                styles.categoryItem,
-                selectedCategory === cat && styles.categoryItemSelected,
-              ]}
-              onPress={() => setSelectedCategory(cat)}
+              {searchText.length > 0 && (
+                <TouchableOpacity
+                  onPress={() => setSearchText("")}
+                  style={{
+                    position: "absolute",
+                    right: 30,
+                    top: "35%",
+                    transform: [{ translateY: -12 }],
+                    padding: 4,
+                  }}
+                >
+                  <Ionicons name="close" size={20} color="#adadad" />
+                </TouchableOpacity>
+              )}
+            </View>
+
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.categoryScroll}
             >
-              <Text
-                style={
-                  selectedCategory === cat
-                    ? styles.categoryTextSelected
-                    : styles.categoryText
-                }
-              >
-                {cat}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+              {categories.map((cat, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={[
+                    styles.categoryItem,
+                    selectedCategory === cat && styles.categoryItemSelected,
+                  ]}
+                  onPress={() => setSelectedCategory(cat)}
+                >
+                  <Text
+                    style={
+                      selectedCategory === cat
+                        ? styles.categoryTextSelected
+                        : styles.categoryText
+                    }
+                  >
+                    {cat}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
 
-        {filteredCourses.length === 0 ? (
+            <View style={styles.priceFilterBtn}>
+              <InlineExpandableFilter onPriceChange={setPriceRange} />
+            </View>
+          </View>
+        }
+        ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Ionicons name="book-outline" size={80} color="#E5E7EB" />
             <Text style={styles.emptyTitle}>No Courses Found</Text>
           </View>
-        ) : (
-          filteredCourses.map((course) => (
-            <CourseCard
-              key={course.id}
-              course={course}
-              onPressDetail={(id) =>
-                // ✅ الصح
-                router.push({
-                  pathname: "/student/course-details",
-                  params: { id },
-                })
-              }
-              onPressEnroll={(id) => console.log("Enroll", id)}
-              onPressFavorite={(id) => console.log("Favorite", id)}
+        }
+        onEndReached={loadMoreCourses}
+        onEndReachedThreshold={0.4}
+        ListFooterComponent={
+          loadingMore ? (
+            <ActivityIndicator
+              size="small"
+              color="#1E40AF"
+              style={{ marginVertical: 20 }}
             />
-          ))
-        )}
-
-        <View style={{ height: 100 }} />
-      </ScrollView>
+          ) : (
+            <View style={{ height: 60 }} />
+          )
+        }
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingBottom: 100,
+          paddingHorizontal: 16,
+          paddingTop: 10,
+        }}
+      />
     </SafeAreaView>
   );
 }

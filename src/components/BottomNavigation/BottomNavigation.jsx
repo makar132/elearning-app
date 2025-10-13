@@ -12,8 +12,8 @@ const { width } = require('react-native').Dimensions.get('window');
 const SIDEBAR_WIDTH = width * 0.75;
 
 const NAV_ITEMS = [
-  { key: 'home', icon: 'home', route: '/student/dashboard', pathPattern: '/dashboard' },
-  { key: 'courses', icon: 'book', route: '/student/my-courses', pathPattern: '/my-courses' },
+  { key: 'home', icon: 'home', route: '/student/my-courses', pathPattern: '/my-courses' },
+  { key: 'courses', icon: 'book', route: '/student/dashboard', pathPattern: '/dashboard' },
   { key: 'chat', icon: 'chatbubble-ellipses', route: '/aiChat', pathPattern: '/aiChat' },
   { key: 'favorites', icon: 'heart', route: '/student/favorites', pathPattern: '/favorites' },
   { key: 'profile', icon: 'person', action: 'sidebar' },

@@ -2,8 +2,8 @@ import { router, Stack } from "expo-router";
 import { StyleSheet, View } from "react-native";
 import { Button } from "react-native-paper";
 import BottomNav from "../../src/components/BottomNavigation/BottomNavigation";
-import { logout } from "../../src/services/authService";
 import { FavoritesProvider } from "../../src/context/FavoritesContext";
+import { logout } from "../../src/services/authService";
 
 export default function StudentLayout({ children }) {
 
@@ -28,11 +28,12 @@ export default function StudentLayout({ children }) {
               </Button>
             )
           }}
+          initialRouteName="my-courses"
         >
-          <Stack.Screen name="my-courses" />
+          <Stack.Screen name="my-courses"  options={{title:"Home"}}/>
           <Stack.Screen name="dashboard" />
           <Stack.Screen name="favorites" />
-          <Stack.Screen name="course-details" />
+          <Stack.Screen name="course-details" options={{title:"Course details"}}/>
         </Stack>
 
         <BottomNav />

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, View, Text, Pressable, ActivityIndicator } from 'react-native';
+import { Modal, View, Text, Pressable, ActivityIndicator, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import styles from '../../utils/Checkout.styles';
 
@@ -12,7 +12,7 @@ export default function ConfirmationModals({
   setShowSuccessModal,
   processing,
   handleConfirmCheckout,
-  enrolledCourses,
+  checkoutCourses,
   totalPrice
 }) {
   return (
@@ -30,8 +30,8 @@ export default function ConfirmationModals({
               {confirmDeleteId === 'all' ? 'Remove All Courses?' : 'Remove Course?'}
             </Text>
             <Text style={styles.modalText}>
-              {confirmDeleteId === 'all' 
-                ? 'Are you sure you want to remove all courses from checkout?' 
+              {confirmDeleteId === 'all'
+                ? 'Are you sure you want to remove all courses from checkout?'
                 : 'Are you sure you want to remove this course from checkout?'}
             </Text>
             <View style={styles.modalButtons}>
@@ -63,30 +63,42 @@ export default function ConfirmationModals({
         onRequestClose={() => !processing && setShowSuccessModal(false)}
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            {processing ? (
-              <>
-                <ActivityIndicator size="large" color="#1E40AF" />
-                <Text style={styles.modalTitle}>Processing...</Text>
-              </>
-            ) : (
-              <>
-                <Ionicons name="checkmark-circle" size={64} color="#059669" />
-                <Text style={styles.modalTitle}>Enrollment Confirmed!</Text>
-                <Text style={styles.modalText}>
-                  You have successfully enrolled in {enrolledCourses.length} course(s) for ${totalPrice.toFixed(2)}
-                </Text>
-                <View style={styles.modalButtons}>
-                  <Pressable
-                    style={[styles.modalButton, styles.modalButtonConfirm]}
-                    onPress={handleConfirmCheckout}
-                  >
-                    <Text style={styles.modalButtonTextConfirm}>Go to My Courses</Text>
-                  </Pressable>
-                </View>
-              </>
-            )}
-          </View>
+          <ScrollView
+            contentContainerStyle={{
+              flexGrow: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingVertical: 40,
+              paddingBottom: 200,
+
+            }}
+          >
+
+            <View style={styles.modalContent}>
+              {processing ? (
+                <>
+                  <ActivityIndicator size="large" color="#1E40AF" />
+                  <Text style={styles.modalTitle}>Processing...</Text>
+                </>
+              ) : (
+                <>
+                  <Ionicons name="checkmark-circle" size={64} color="#059669" />
+                  <Text style={styles.modalTitle}>Enrollment Confirmed!</Text>
+                  <Text style={styles.modalText}>
+                    You have successfully enrolled in {checkoutCourses.length} course(s) for ${totalPrice.toFixed(2)}
+                  </Text>
+                  <View style={styles.modalButtons}>
+                    <Pressable
+                      style={[styles.modalButton, styles.modalButtonConfirm]}
+                      onPress={handleConfirmCheckout}
+                    >
+                      <Text style={styles.modalButtonTextConfirm}>Go to My Courses</Text>
+                    </Pressable>
+                  </View>
+                </>
+              )}
+            </View>
+          </ScrollView>
         </View>
       </Modal>
     </>

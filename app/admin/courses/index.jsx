@@ -82,7 +82,6 @@ export default function CoursesScreen() {
 
       <FAB
         icon="plus"
-        label="New Course"
         onPress={() => router.push("/admin/courses/create-course")}
         style={[styles.fab, { backgroundColor: Colors.primary }]}
       />

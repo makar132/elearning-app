@@ -36,7 +36,7 @@ export default function Index() {
       student: "/student/my-courses",
       instructor: "/instructor",
     };
-    router.replace(roleRoutes[user.role] || "/student/dashboard");
+    router.replace(roleRoutes[user.role] || "/student");
   }, [isLoading, hydrated, completed, user]);
 
   return (

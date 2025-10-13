@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import defaultImg from "../../../assets/images/picture-loading-failed-1.png";
 import styles from "../../utils/CourseCard.styles";
-
+import FavoriteButton from "./FavButton";
 export default function CourseCard({ course, onPressDetail, onPressEnroll, onPressFavorite }) {
   return (
     <View style={styles.card}>
@@ -29,10 +29,11 @@ export default function CourseCard({ course, onPressDetail, onPressEnroll, onPre
               <Text style={styles.iconLabel}>Enroll</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => onPressFavorite(course.id)} style={styles.iconButton}>
-              <Ionicons name="heart-outline" size={24} color="#EF4444" />
+            {/* Favorite */}
+            <View style={styles.iconButton}>
+              <FavoriteButton course={course} />
               <Text style={styles.iconLabel}>Favorite</Text>
-            </TouchableOpacity>
+            </View>
           </View>
         </View>
       </View>

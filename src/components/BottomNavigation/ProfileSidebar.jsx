@@ -12,12 +12,18 @@ import {
 } from "react-native";
 import { useAuth } from "../../context/AuthContext";
 import styles from "../../utils/BottomNav.styles";
-
+import { useFavorites } from "../../context/FavoritesContext";
 const { width } = Dimensions.get("window");
 const SIDEBAR_WIDTH = width * 0.55;
 
 const ProfileSidebar = ({ visible, toggleSidebar, handleLogout, menuItems = [], checkoutCount = 0 }) => {
   const { user } = useAuth();
+  const { favoriteCourses } = useFavorites();
+
+
+  // تأكيد إن القيم arrays حتى لو undefined
+  const favoritesList = Array.isArray(favoriteCourses) ? favoriteCourses : [];
+
 
   return (
     <Modal visible={visible} transparent animationType="none" onRequestClose={toggleSidebar} statusBarTranslucent>
@@ -25,7 +31,7 @@ const ProfileSidebar = ({ visible, toggleSidebar, handleLogout, menuItems = [], 
 
       <TouchableOpacity style={styles.overlay} activeOpacity={1} onPress={toggleSidebar}>
         <View style={[styles.sidebar, { width: SIDEBAR_WIDTH, position: 'absolute', right: 0 }]}>
-          
+
           {/* Header */}
           <View style={styles.sidebarHeader}>
             <TouchableOpacity style={styles.closeButton} onPress={toggleSidebar}>
@@ -60,6 +66,30 @@ const ProfileSidebar = ({ visible, toggleSidebar, handleLogout, menuItems = [], 
                   </View>
                 </TouchableOpacity>
               ))}
+
+
+              {/* Favorites */}
+              <TouchableOpacity
+                style={[styles.menuItem, { marginTop: 10 }]}
+                onPress={() => {
+                  toggleSidebar();
+                  setTimeout(() => router.push("/student/favorites"), 300);
+                }}
+                activeOpacity={0.7}
+              >
+                <View style={styles.menuItemContent}>
+                  <View style={[styles.menuIconContainer, { position: "relative" }]}>
+                    <Ionicons name="heart-outline" size={22} color="#1E40AF" />
+                    {favoritesList.length > 0 && (
+                      <View style={styles.cartIconBadge}>
+                        <Text style={styles.cartIconBadgeText}>{favoritesList.length}</Text>
+                      </View>
+                    )}
+                  </View>
+                  <Text style={styles.menuText}>Favorites</Text>
+                </View>
+              </TouchableOpacity>
+
 
               {/* Checkout */}
               <TouchableOpacity

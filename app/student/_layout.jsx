@@ -2,8 +2,8 @@ import { router, Stack } from "expo-router";
 import { StyleSheet, View } from "react-native";
 import { Button } from "react-native-paper";
 import BottomNav from "../../src/components/BottomNavigation/BottomNavigation";
-import { logout } from "../../src/services/authService";
 import { FavoritesProvider } from "../../src/context/FavoritesContext";
+import { logout } from "../../src/services/authService";
 
 export default function StudentLayout({ children }) {
 

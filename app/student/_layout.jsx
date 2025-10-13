@@ -34,6 +34,7 @@ export default function StudentLayout({ children }) {
           <Stack.Screen name="dashboard" />
           <Stack.Screen name="favorites" />
           <Stack.Screen name="course-details" options={{title:"Course details"}}/>
+          <Stack.Screen name="checkout" options={{title:"Checkout"}}/>
         </Stack>
 
         <BottomNav />

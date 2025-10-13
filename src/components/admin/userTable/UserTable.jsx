@@ -19,8 +19,8 @@ export default function UserTable({
   const [menuVisible, setMenuVisible] = React.useState(false);
 
   return (
-    <Card style={[styles.card, { flex: 1 }]}>
-      <Card.Content style={[styles.cardContent, { flex: 1 }]}>
+    <Card style={[styles.card]}>
+      <Card.Content style={[styles.cardContent]}>
         <View style={styles.header}>
           <Text variant="titleLarge" style={styles.headerTitle}>
             User Management
@@ -87,8 +87,7 @@ export default function UserTable({
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ flexGrow: 1, width: "100%" }}
-          style={{ flex: 1 }}
+          contentContainerStyle={{ flexGrow: 1}}
         >
           <UserTableBody
             users={users}

@@ -58,14 +58,15 @@ export default StyleSheet.create({
     color: "#333333",
     fontWeight: "600",
   },
-  nameColumn: { flex: 2 },
-  roleColumn: { flex: 1 },
+  nameColumn: { flex: 2 ,marginRight: 16 ,minWidth: 200},
+  roleColumn: { flex: 1 ,marginRight: 16 , minWidth: 100},
   statsColumn: {
     flex: 1, marginRight: 16,
     alignItems: "center",
     justifyContent: "center",
+    minWidth: 100
   },
-  actionColumn: { flex: 1, marginLeft: 8 },
+  actionColumn: { flex: 1, marginLeft: 8 ,minWidth: 100},
   row: {
     borderBottomWidth: 1,
     borderBottomColor: "#F0F0F0",

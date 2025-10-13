@@ -16,10 +16,10 @@ export default function AuthLayout() {
       if (pathname.endsWith("/login") || pathname.endsWith("/register")) {
         const roleToPath = {
           admin: "/admin",
-          student: "/student/dashboard",
+          student: "/student",
           instructor: "/instructor",
         };
-        router.replace(roleToPath[user.role] || "/student/dashboard");
+        router.replace(roleToPath[user.role] || "/student");
       }
     }
   }, [user, isLoading]);

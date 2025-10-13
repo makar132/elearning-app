@@ -92,7 +92,7 @@ export default function UsersScreen() {
         />
       </>
 
-      <FAB icon="plus" label="Add User" onPress={showSoon} style={styles.fab} />
+      <FAB icon="plus"  onPress={showSoon} style={styles.fab} />
       <EditUserModal
         visible={modalVisible}
         onDismiss={() => setModalVisible(false)}

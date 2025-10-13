@@ -147,7 +147,13 @@ export default function AdminDashboard() {
           <Text variant="titleLarge" style={styles.sectionTitle}>
             Quick Actions
           </Text>
-          <View style={styles.actions}>
+          <ScrollView
+                      horizontal
+                      showsHorizontalScrollIndicator={false}
+                      contentContainerStyle={{ flexGrow: 1 }}
+                      style={styles.quickActions}
+                    
+          >
             <Button
               mode="contained"
               icon="account-plus"
@@ -172,7 +178,7 @@ export default function AdminDashboard() {
             >
               View All Courses
             </Button>
-          </View>
+          </ScrollView>
         </View>
       </ScrollView>
       <Snackbar
@@ -219,7 +225,8 @@ const styles = StyleSheet.create({
   courseInstructor: { color: "#666", marginTop: 2 },
   section: { marginBottom: 16, paddingHorizontal: 16 },
   actions: { flexDirection: "row", justifyContent: "space-around" },
-  button: { marginVertical: 4 },
+  button: { marginVertical: 4 , marginHorizontal: 8},
+  quickActions: { flexDirection: "row" },
   fab: {
     position: "absolute",
     right: 16,

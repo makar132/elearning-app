@@ -68,6 +68,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.md,
     backgroundColor: Colors.bgLight,
+    marginBottom: Spacing.xl,
   },
   button: {
     marginHorizontal: 6,
